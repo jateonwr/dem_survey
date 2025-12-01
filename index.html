@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <title>แบบฟอร์มสำรวจข้อมูล DEM ของหน่วยงานรัฐในประเทศไทย</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      body {
+        font-family: "Sarabun", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+      select[multiple] {
+        min-height: 3.5rem;
+      }
+
+      /* toggle-pill */
+      .toggle-pill {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        min-width: 72px;
+        height: 26px;
+        border-radius: 9999px;
+        cursor: pointer;
+        border: none;
+        outline: none;
+        transition: background-color 0.25s ease;
+        padding: 0 6px;
+        background-color: #94a3b8;
+      }
+
+      .toggle-pill .toggle-knob {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #ffffff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        position: absolute;
+        top: 3px;
+        left: 4px;
+        transition: left 0.25s ease, right 0.25s ease;
+      }
+
+      .toggle-pill[data-state="shown"] {
+        background-color: #22c55e;
+      }
+      .toggle-pill[data-state="shown"] .toggle-knob {
+        left: auto;
+        right: 4px;
+      }
+
+      .toggle-pill[data-state="hidden"] {
+        background-color: #94a3b8;
+      }
+      .toggle-pill[data-state="hidden"] .toggle-knob {
+        left: 4px;
+        right: auto;
+      }
+
+      .toggle-label {
+        display: inline-block;
+        color: #ffffff;
+        font-size: 11px;
+        margin-left: 8px;
+        pointer-events: none;
+      }
+
+      /* Tag แบบ C (pill) สำหรับลุ่มน้ำ / จังหวัด */
+      .tag-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.15rem 0.5rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        background-color: #dbeafe; /* blue-100 */
+        color: #1d4ed8; /* blue-700 */
+        cursor: pointer;
+        margin-right: 0.25rem;
+        margin-bottom: 0.25rem;
+      }
+      .tag-pill .tag-text {
+        margin-right: 0.25rem;
+      }
+      .tag-pill .tag-remove {
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-slate-100">
+    <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <div
+        class="rounded-2xl bg-white shadow-lg px-4 py-5 sm:px-6 sm:py-6 lg:px-8"
+      >
+        <header class="border-b border-slate-200 pb-3 mb-5">
+          <div class="flex items-center gap-4">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Emblem_of_the_Office_of_the_National_Water_Resources.svg/1014px-Emblem_of_the_Office_of_the_National_Water_Resources.svg.png"
+              alt="สทนช. Emblem"
+              class="h-12 w-12 object-contain"
+            />
+            <div>
+              <h1 class="text-xl sm:text-2xl font-semibold text-slate-800">
+                แบบฟอร์มสำรวจข้อมูล DEM ของหน่วยงานรัฐในประเทศไทย
+              </h1>
+              <p class="mt-1 text-sm text-slate-600">
+                Digital Elevation Model (DEM) Inventory Survey Form
+              </p>
+            </div>
+          </div>
+        </header>
+
+        <form id="demSurveyForm" class="space-y-7">
+          <!-- ส่วนที่ 1 -->
+          <section>
+            <h2
+              class="text-lg font-semibold text-slate-800 mb-3 border-l-4 border-blue-600 pl-3"
+            >
+              ส่วนที่ 1 : ข้อมูลพื้นฐานของหน่วยงาน
+            </h2>
+
+            <div class="flex flex-col gap-3 sm:flex-row mb-4">
+              <div class="sm:flex-1">
+                <label
+                  for="agencyName"
+                  class="block text-sm font-medium text-slate-700 mb-1"
+                  >1. ชื่อหน่วยงาน</label
+                >
+                <input
+                  type="text"
+                  id="agencyName"
+                  name="agencyName"
+                  class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="เช่น สำนักงานทรัพยากรน้ำแห่งชาติ (สทนช.)"
+                />
+              </div>
+
+              <div class="sm:flex-1">
+                <label
+                  for="subUnit"
+                  class="block text-sm font-medium text-slate-700 mb-1"
+                  >2. หน่วยงานย่อย / สำนัก / กอง</label
+                >
+                <input
+                  type="text"
+                  id="subUnit"
+                  name="subUnit"
+                  class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="เช่น กองวิจัยและพัฒนา"
+                />
+              </div>
+            </div>
+
+            <fieldset
+              class="border border-slate-300 rounded-lg p-3 bg-slate-50/30"
+            >
+              <legend class="px-2 text-sm font-semibold text-slate-700">
+                3. ผู้ประสานงาน
+              </legend>
+
+              <div class="grid gap-3 sm:grid-cols-2 mt-1">
+                <div>
+                  <label
+                    for="contactName"
+                    class="block text-sm font-medium text-slate-700 mb-1"
+                    >ชื่อ–สกุล</label
+                  >
+                  <input
+                    type="text"
+                    id="contactName"
+                    name="contactName"
+                    class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="เช่น นายสมชาย ใจดี"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="contactPosition"
+                    class="block text-sm font-medium text-slate-700 mb-1"
+                    >ตำแหน่ง</label
+                  >
+                  <input
+                    type="text"
+                    id="contactPosition"
+                    name="contactPosition"
+                    class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="ตำแหน่ง"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="contactPhone"
+                    class="block text-sm font-medium text-slate-700 mb-1"
+                    >โทรศัพท์</label
+                  >
+                  <input
+                    type="tel"
+                    id="contactPhone"
+                    name="contactPhone"
+                    class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="0x-xxx-xxxx"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="contactEmail"
+                    class="block text-sm font-medium text-slate-700 mb-1"
+                    >อีเมล</label
+                  >
+                  <input
+                    type="email"
+                    id="contactEmail"
+                    name="contactEmail"
+                    class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="email@example.go.th"
+                  />
+                </div>
+              </div>
+            </fieldset>
+          </section>
+
+          <hr class="border-slate-200" />
+
+          <!-- ส่วนที่ 2 -->
+          <section>
+            <div
+              class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4"
+            >
+              <div>
+                <h2
+                  class="text-lg font-semibold text-slate-800 border-l-4 border-blue-600 pl-3"
+                >
+                  ส่วนที่ 2 : รายการข้อมูล DEM ที่หน่วยงานมี
+                </h2>
+                <p class="text-xs text-slate-600 mt-1 pl-4">
+                  กรอกซ้ำได้หลายแถวตามจำนวนชุดข้อมูล DEM
+                </p>
+              </div>
+              <button
+                type="button"
+                id="btnAddDemItem"
+                class="inline-flex items-center justify-center rounded-lg border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 active:bg-blue-800 transition-colors gap-2"
+              >
+                <i class="fa-solid fa-file-circle-plus"></i>
+                <span>DEM</span>
+              </button>
+            </div>
+
+            <div id="demItemsContainer" class="space-y-5">
+              <div
+                class="dem-item rounded-xl border border-slate-300 bg-slate-50 px-3 py-4 sm:px-4 sm:py-4 relative"
+              >
+                <div
+                  class="flex items-center justify-between gap-2 mb-3 border-b border-slate-200 pb-2"
+                >
+                  <h3
+                    class="text-sm font-bold text-slate-700 flex items-center gap-2"
+                  >
+                    <span
+                      class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded mr-1 dem-index"
+                      >#1</span
+                    >
+                    ข้อมูลชุดที่ 1
+                    <button
+                      type="button"
+                      class="btn-remove-dem-item inline-flex items-center justify-center rounded-md border border-rose-300 bg-white px-2.5 py-1 text-xs font-medium text-rose-600 hover:bg-rose-500 hover:text-white transition shadow-sm hidden"
+                      title="ลบชุดข้อมูลนี้"
+                    >
+                      <span class="mr-1">ลบข้อมูล</span>
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </h3>
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="text-[11px] text-slate-500 hidden sm:inline"
+                      >ซ่อน/แสดง ส่วนย่อย</span
+                    >
+                    <button
+                      type="button"
+                      class="item-toggle-all toggle-pill"
+                      data-state="hidden"
+                    >
+                      <span class="toggle-knob"></span>
+                      <span class="toggle-label">แสดง</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="space-y-4">
+                  <!-- A. ข้อมูลทั่วไป -->
+                  <div
+                    class="section-card rounded-lg bg-white border border-slate-200 px-3 py-3 space-y-3 shadow-sm"
+                  >
+                    <div
+                      class="section-header flex items-center justify-between select-none"
+                    >
+                      <p class="text-sm font-semibold text-slate-800">
+                        A. ข้อมูลทั่วไป
+                      </p>
+                      <button
+                        type="button"
+                        class="section-toggle toggle-pill"
+                        data-state="shown"
+                      >
+                        <span class="toggle-knob"></span>
+                        <span class="toggle-label">ซ่อน</span>
+                      </button>
+                    </div>
+                    <div class="section-body space-y-3">
+                      <div
+                        class="flex flex-col gap-3 sm:flex-row sm:items-end"
+                      >
+                        <div class="sm:basis-[60%]">
+                          <label
+                            class="block text-sm font-medium text-slate-700 mb-1"
+                            >1. ชื่อชุดข้อมูล DEM</label
+                          >
+                          <input
+                            type="text"
+                            name="demName[]"
+                            class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="เช่น DEM LiDAR พ.ศ. 2566 พื้นที่ลุ่มน้ำบางปะกง"
+                          />
+                        </div>
+
+                        <div class="sm:basis-[30%]">
+                          <label
+                            class="block text-sm font-medium text-slate-700 mb-1"
+                            >2. แหล่งที่มา / ผู้ผลิตข้อมูล</label
+                          >
+                          <select
+                            name="sourceType[]"
+                            class="source-select block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">-- เลือกแหล่งที่มา --</option>
+                            <option value="self">หน่วยงานผลิตเอง</option>
+                            <option value="rtsd">กรมแผนที่ทหาร</option>
+                            <option value="gistda">GISTDA</option>
+                            <option value="ldd">กรมพัฒนาที่ดิน</option>
+                            <option value="other">อื่น ๆ (ระบุ)</option>
+                          </select>
+                          <div class="source-other-wrapper mt-1 hidden">
+                            <input
+                              type="text"
+                              name="sourceOther[]"
+                              class="source-other-input block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="ระบุหน่วยงาน / บริษัท"
+                              disabled
+                            />
+                          </div>
+                        </div>
+
+                        <div class="sm:basis-[10%] sm:max-w-[96px]">
+                          <label
+                            class="block text-sm font-medium text-slate-700 mb-1"
+                            >3. ปี</label
+                          >
+                          <select
+                            name="year[]"
+                            class="year-select block w-full rounded-md border border-slate-300 bg-white px-2 py-2 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">พ.ศ.</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <!-- 4. พื้นที่ครอบคลุม -->
+                      <div>
+                        <p
+                          class="block text-sm font-medium text-slate-700 mb-1"
+                        >
+                          4. พื้นที่ครอบคลุม
+                        </p>
+
+                        <div class="space-y-3 text-sm">
+                          <!-- ประเทศไทยทั้งหมด -->
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="coverageCountry[]"
+                              value="thailand_all"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>ประเทศไทยทั้งหมด</span>
+                          </label>
+
+                          <!-- ลุ่มน้ำ -->
+                          <div class="space-y-1">
+                            <label
+                              class="inline-flex flex-wrap items-center gap-2"
+                            >
+                              <input
+                                type="checkbox"
+                                class="toggle-basin h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                              />
+                              <span>
+                                ลุ่มน้ำ (เลือกได้หลายค่า / พิมพ์เอง)
+                              </span>
+                              <!-- Stack ของ Tag ลุ่มน้ำ -->
+                              <div
+                                class="basin-tags flex flex-wrap items-center gap-1"
+                              ></div>
+                            </label>
+                            <div class="basin-block mt-1 hidden">
+                              <input
+                                type="text"
+                                class="basin-search mb-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-1 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="พิมพ์เพื่อค้นหาลุ่มน้ำ"
+                              />
+                              <select
+                                name="coverageBasin[]"
+                                multiple
+                                class="basin-select block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              >
+                                <!-- เติมจากชีท reference ผ่าน Apps Script -->
+                              </select>
+                              <p class="mt-1 text-xs text-slate-500">
+                                * ดับเบิ้ลคลิกที่รายการ เพื่อเพิ่ม/เอาออกจาก
+                                Stack ด้านบน
+                              </p>
+                              <input
+                                type="hidden"
+                                name="coverageBasinOther[]"
+                                class="basin-other-input"
+                              />
+                            </div>
+                          </div>
+
+                          <!-- จังหวัด -->
+                          <div class="space-y-1">
+                            <label
+                              class="inline-flex flex-wrap items-center gap-2"
+                            >
+                              <input
+                                type="checkbox"
+                                class="toggle-province h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                              />
+                              <span>
+                                จังหวัด (เลือกได้หลายค่า / พิมพ์เอง)
+                              </span>
+                              <!-- Stack ของ Tag จังหวัด -->
+                              <div
+                                class="province-tags flex flex-wrap items-center gap-1"
+                              ></div>
+                            </label>
+                            <div class="province-block mt-1 hidden">
+                              <input
+                                type="text"
+                                class="province-search mb-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-1 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="พิมพ์เพื่อค้นหาจังหวัด"
+                              />
+                              <select
+                                name="coverageProvince[]"
+                                multiple
+                                class="province-select block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              >
+                                <!-- เติมจากชีท reference ผ่าน Apps Script -->
+                              </select>
+                              <p class="mt-1 text-xs text-slate-500">
+                                * ดับเบิ้ลคลิกที่รายการ เพื่อเพิ่ม/เอาออกจาก
+                                Stack ด้านบน
+                              </p>
+                              <input
+                                type="hidden"
+                                name="coverageProvinceOther[]"
+                                class="province-other-input"
+                              />
+                            </div>
+                          </div>
+
+                          <!-- พื้นที่เฉพาะจุด -->
+                          <div class="space-y-1">
+                            <label class="inline-flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                class="toggle-local h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                              />
+                              <span>พื้นที่เฉพาะจุด (รับได้ 1 ค่า)</span>
+                            </label>
+                            <div class="local-block mt-1 hidden">
+                              <input
+                                type="text"
+                                name="coverageLocal[]"
+                                class="local-input block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
+                                placeholder="เช่น เขตเทศบาลเมืองหาดใหญ่"
+                                disabled
+                              />
+                              <p class="mt-1 text-xs text-slate-500">
+                                * กรอกได้ 1 พื้นที่
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- B. รายละเอียดทางเทคนิค -->
+                  <div
+                    class="section-card rounded-lg bg-white border border-slate-200 px-3 py-3 space-y-3 shadow-sm"
+                  >
+                    <div
+                      class="section-header flex items-center justify-between select-none"
+                    >
+                      <p class="text-sm font-semibold text-slate-800">
+                        B. รายละเอียดทางเทคนิค
+                      </p>
+                      <button
+                        type="button"
+                        class="section-toggle toggle-pill"
+                        data-state="hidden"
+                      >
+                        <span class="toggle-knob"></span>
+                        <span class="toggle-label">แสดง</span>
+                      </button>
+                    </div>
+                    <div class="section-body space-y-3 hidden">
+                      <div
+                        class="flex flex-col gap-3 lg:flex-row lg:items-end lg:flex-nowrap"
+                      >
+                        <div class="lg:flex-1 min-w-[160px]">
+                          <label
+                            class="block text-sm font-medium text-slate-700 mb-1"
+                            >5. Resolution</label
+                          >
+                          <select
+                            name="resolution[]"
+                            class="resolution-select block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">-- เลือก Resolution --</option>
+                            <option value="30m">30 m</option>
+                            <option value="10m">10 m</option>
+                            <option value="5m">5 m</option>
+                            <option value="1m">1 m</option>
+                            <option value="lidar_sub1m">
+                              ต่ำกว่า 1 m (LiDAR / ระบุ)
+                            </option>
+                            <option value="other">อื่น ๆ (ระบุ)</option>
+                          </select>
+                          <div class="resolution-other-wrapper mt-1 hidden">
+                            <input
+                              type="text"
+                              name="resolutionOther[]"
+                              class="resolution-other-input block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="เช่น 0.5 m หรือรายละเอียดเพิ่มเติม"
+                              disabled
+                            />
+                          </div>
+                        </div>
+
+                        <div class="lg:flex-1 min-w-[140px]">
+                          <label
+                            class="block text-sm font-medium text-slate-700 mb-1"
+                            >6. Vertical Accuracy (m)</label
+                          >
+                          <input
+                            type="number"
+                            step="0.01"
+                            name="verticalAccuracy[]"
+                            class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="เช่น 0.15"
+                          />
+                        </div>
+
+                        <div class="lg:flex-1 min-w-[140px]">
+                          <label
+                            class="block text-sm font-medium text-slate-700 mb-1"
+                            >7. Horizontal Accuracy (m)</label
+                          >
+                          <input
+                            type="number"
+                            step="0.01"
+                            name="horizontalAccuracy[]"
+                            class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="เช่น 0.30"
+                          />
+                        </div>
+                      </div>
+
+                      <div
+                        class="flex flex-col gap-3 lg:flex-row lg:items-end lg:flex-nowrap"
+                      >
+                        <div class="lg:basis-1/2 min-w-[160px]">
+                          <label
+                            class="block text-sm font-medium text-slate-700 mb-1"
+                            >8. Vertical Datum</label
+                          >
+                          <select
+                            name="verticalDatum[]"
+                            class="vertical-datum-select block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">-- เลือก Vertical Datum --</option>
+                            <option value="MSL">MSL</option>
+                            <option value="EGM96">EGM96</option>
+                            <option value="other">อื่น ๆ (ระบุ)</option>
+                          </select>
+                          <div
+                            class="vertical-datum-other-wrapper mt-1 hidden"
+                          >
+                            <input
+                              type="text"
+                              name="verticalDatumOther[]"
+                              class="vertical-datum-other-input block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="ระบุ Datum อื่น ๆ"
+                              disabled
+                            />
+                          </div>
+                        </div>
+
+                        <div class="lg:basis-1/2 min-w-[160px]">
+                          <label
+                            class="block text-sm font-medium text-slate-700 mb-1"
+                            >9. Coordinate System</label
+                          >
+                          <select
+                            name="coordSys[]"
+                            class="coord-select block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">-- เลือกระบบพิกัด --</option>
+                            <option value="WGS84">WGS84</option>
+                            <option value="UTM47N">UTM 47N</option>
+                            <option value="UTM48N">UTM 48N</option>
+                            <option value="other">อื่น ๆ (ระบุ)</option>
+                          </select>
+                          <div class="coord-other-wrapper mt-1 hidden">
+                            <input
+                              type="text"
+                              name="coordSysOther[]"
+                              class="coord-other-input block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="ระบุระบบพิกัดอื่น ๆ"
+                              disabled
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 10 fieldset -->
+                      <fieldset
+                        class="border border-slate-200 rounded-lg px-3 py-3"
+                      >
+                        <legend
+                          class="text-sm font-semibold text-slate-700 px-1"
+                        >
+                          10. DEM Method (เลือกได้หลายค่า)
+                        </legend>
+                        <div class="mt-2 flex flex-wrap gap-3 text-sm">
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="demMethodLidar[]"
+                              value="LiDAR"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>LiDAR</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="demMethodUav[]"
+                              value="UAV Photogrammetry"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>UAV Photogrammetry</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="demMethodAlos[]"
+                              value="ALOS"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>ALOS</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="demMethodSrtm[]"
+                              value="SRTM"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>SRTM</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="demMethodTanDEM[]"
+                              value="TanDEM-X"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>TanDEM-X</span>
+                          </label>
+
+                          <label
+                            class="inline-flex items-center gap-2 flex-1 min-w-[220px]"
+                          >
+                            <input
+                              type="checkbox"
+                              name="demMethodOtherFlag[]"
+                              value="other"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>อื่น ๆ</span>
+                            <input
+                              type="text"
+                              name="demMethodOther[]"
+                              class="flex-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="ระบุวิธีการจัดทำ DEM อื่น ๆ"
+                            />
+                          </label>
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+
+                  <!-- C. รูปแบบไฟล์และการเข้าถึง -->
+                  <div
+                    class="section-card rounded-lg bg-white border border-slate-200 px-3 py-3 space-y-3 shadow-sm"
+                  >
+                    <div
+                      class="section-header flex items-center justify-between select-none"
+                    >
+                      <p class="text-sm font-semibold text-slate-800">
+                        C. รูปแบบไฟล์และการเข้าถึง
+                      </p>
+                      <button
+                        type="button"
+                        class="section-toggle toggle-pill"
+                        data-state="hidden"
+                      >
+                        <span class="toggle-knob"></span>
+                        <span class="toggle-label">แสดง</span>
+                      </button>
+                    </div>
+                    <div class="section-body space-y-3 hidden">
+                      <!-- 11 fieldset -->
+                      <fieldset
+                        class="border border-slate-200 rounded-lg px-3 py-3"
+                      >
+                        <legend
+                          class="text-sm font-semibold text-slate-700 px-1"
+                        >
+                          11. File Format (เลือกได้หลายค่า)
+                        </legend>
+                        <div class="mt-2 flex flex-wrap gap-3 text-sm">
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="formatGeoTIFF[]"
+                              value="GeoTIFF"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>GeoTIFF</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="formatIMG[]"
+                              value="IMG"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>IMG</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="formatASC[]"
+                              value="ASC"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>ASC</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="formatLAS[]"
+                              value="LAS/LAZ"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>LAS/LAZ</span>
+                          </label>
+
+                          <label
+                            class="inline-flex items-center gap-2 flex-1 min-w-[220px]"
+                          >
+                            <input
+                              type="checkbox"
+                              name="formatOtherFlag[]"
+                              value="other"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>อื่น ๆ</span>
+                            <input
+                              type="text"
+                              name="formatOther[]"
+                              class="flex-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="ระบุรูปแบบไฟล์อื่น ๆ"
+                            />
+                          </label>
+                        </div>
+                      </fieldset>
+
+                      <!-- 12 + 13 ในบรรทัดเดียวกัน -->
+                      <div
+                        class="flex flex-col gap-3 md:flex-row md:items-end md:flex-wrap"
+                      >
+                        <div class="md:flex-1 md:min-w-[220px]">
+                          <label
+                            class="block text-sm font-medium text-slate-700 mb-1"
+                            >12. ขนาดไฟล์</label
+                          >
+                          <div
+                            class="flex flex-col gap-2 sm:flex-row sm:items-center"
+                          >
+                            <div class="w-full sm:w-1/2">
+                              <input
+                                type="number"
+                                step="0.01"
+                                name="fileSize[]"
+                                class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="เช่น 120"
+                              />
+                            </div>
+                            <div class="w-full sm:w-1/2">
+                              <select
+                                name="fileSizeUnit[]"
+                                class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              >
+                                <option value="">
+                                  -- เลือกหน่วยของขนาดข้อมูล --
+                                </option>
+                                <option value="TB">TB</option>
+                                <option value="GB">GB</option>
+                                <option value="MB">MB</option>
+                                <option value="KB">KB</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="md:flex-1 md:min-w-[220px]">
+                          <label
+                            class="block text-sm font-medium text-slate-700 mb-1"
+                            >13. ลิขสิทธิ์</label
+                          >
+                          <select
+                            name="license[]"
+                            class="license-select block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">-- เลือกลิขสิทธิ์ --</option>
+                            <option value="open">Open Data</option>
+                            <option value="internal">Internal</option>
+                            <option value="exchange">Exchange</option>
+                            <option value="restricted">
+                              Security Restricted
+                            </option>
+                            <option value="other">อื่น ๆ (ระบุ)</option>
+                          </select>
+                          <div class="license-other-wrapper mt-1 hidden">
+                            <input
+                              type="text"
+                              name="licenseOther[]"
+                              class="license-other-input block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="ระบุประเภทลิขสิทธิ์อื่น ๆ"
+                              disabled
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 14 fieldset -->
+                      <fieldset
+                        class="border border-slate-200 rounded-lg px-3 py-3"
+                      >
+                        <legend
+                          class="text-sm font-semibold text-slate-700 px-1"
+                        >
+                          14. ช่องทางการเข้าถึง (เลือกได้หลายค่า)
+                        </legend>
+                        <div class="mt-2 flex flex-wrap gap-3 text-sm">
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="accessWeb[]"
+                              value="web"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>เว็บดาวน์โหลด</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="accessOfficial[]"
+                              value="official_letter"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>หนังสือราชการ</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="accessMou[]"
+                              value="mou_nda"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>MOU / NDA</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="accessInternal[]"
+                              value="internal"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>ภายในหน่วยงาน</span>
+                          </label>
+
+                          <label
+                            class="inline-flex items-center gap-2 flex-1 min-w-[220px]"
+                          >
+                            <input
+                              type="checkbox"
+                              name="accessOtherFlag[]"
+                              value="other"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>อื่น ๆ</span>
+                            <input
+                              type="text"
+                              name="accessOther[]"
+                              class="flex-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="ระบุช่องทางอื่น ๆ"
+                            />
+                          </label>
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+
+                  <!-- D. คุณภาพและการใช้งาน -->
+                  <div
+                    class="section-card rounded-lg bg-white border border-slate-200 px-3 py-3 space-y-3 shadow-sm"
+                  >
+                    <div
+                      class="section-header flex items-center justify-between select-none"
+                    >
+                      <p class="text-sm font-semibold text-slate-800">
+                        D. คุณภาพและการใช้งาน
+                      </p>
+                      <button
+                        type="button"
+                        class="section-toggle toggle-pill"
+                        data-state="hidden"
+                      >
+                        <span class="toggle-knob"></span>
+                        <span class="toggle-label">แสดง</span>
+                      </button>
+                    </div>
+                    <div class="section-body space-y-3 hidden">
+                      <!-- 15 fieldset -->
+                      <fieldset
+                        class="border border-slate-200 rounded-lg px-3 py-3"
+                      >
+                        <legend
+                          class="text-sm font-semibold text-slate-700 px-1"
+                        >
+                          15. QC/QA (เลือกได้หลายค่า)
+                        </legend>
+                        <div class="mt-2 flex flex-wrap gap-3 text-sm">
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="qcNone[]"
+                              value="none"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>ไม่มี</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="qcGcp[]"
+                              value="GCP"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>GCP</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="qcOtherDEM[]"
+                              value="compare_dem"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>เปรียบเทียบ DEM อื่น</span>
+                          </label>
+                          <label
+                            class="inline-flex items-center gap-2 flex-1 min-w-[220px]"
+                          >
+                            <input
+                              type="checkbox"
+                              name="qcOtherFlag[]"
+                              value="other"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>อื่น ๆ</span>
+                            <input
+                              type="text"
+                              name="qcOther[]"
+                              class="flex-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="ระบุวิธี QC/QA อื่น ๆ"
+                            />
+                          </label>
+                        </div>
+                      </fieldset>
+
+                      <!-- 16 fieldset -->
+                      <fieldset
+                        class="border border-slate-200 rounded-lg px-3 py-3"
+                      >
+                        <legend
+                          class="text-sm font-semibold text-slate-700 px-1"
+                        >
+                          16. การใช้งานหลัก (เลือกได้หลายค่า)
+                        </legend>
+                        <div class="mt-2 flex flex-wrap gap-3 text-sm">
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="useFlood[]"
+                              value="flood"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>น้ำท่วม</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="useSubBasin[]"
+                              value="sub_basin"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>ลุ่มน้ำย่อย</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="useUrbanPlan[]"
+                              value="urban_planning"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>ผังเมือง</span>
+                          </label>
+                          <label class="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              name="useModel[]"
+                              value="models"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>แบบจำลอง RRI / HEC / MIKE</span>
+                          </label>
+
+                          <label
+                            class="inline-flex items-center gap-2 flex-1 min-w-[220px]"
+                          >
+                            <input
+                              type="checkbox"
+                              name="useOtherFlag[]"
+                              value="other"
+                              class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span>อื่น ๆ</span>
+                            <input
+                              type="text"
+                              name="useOther[]"
+                              class="flex-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="ระบุการใช้งานอื่น ๆ"
+                            />
+                          </label>
+                        </div>
+                      </fieldset>
+
+                      <!-- 17 -->
+                      <div>
+                        <label
+                          class="block text-sm font-medium text-slate-700 mb-1"
+                          >17. หมายเหตุเพิ่มเติม</label
+                        >
+                        <textarea
+                          name="remark[]"
+                          rows="1"
+                          style="resize: vertical; min-height: 2.5rem;"
+                          class="block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="ระบุข้อมูลเพิ่มเติม เช่น ปัญหาในการใช้งาน, ข้อจำกัด, แผนการปรับปรุงในอนาคต"
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div
+            class="flex flex-col gap-3 pt-4 border-t border-slate-200 sm:flex-row sm:items-center sm:justify-end"
+          >
+            <button
+              type="reset"
+              id="btnResetForm"
+              class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 active:bg-slate-100"
+            >
+              ล้างค่า
+            </button>
+            <button
+              type="submit"
+              id="btnSubmitForm"
+              class="inline-flex items-center justify-center rounded-lg border border-blue-600 bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 active:bg-blue-800"
+            >
+              บันทึกแบบฟอร์ม
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Popup ยืนยัน -->
+    <div
+      id="confirmModal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/40"
+    >
+      <div
+        class="bg-white rounded-2xl shadow-xl max-w-sm w-full mx-4 p-5 border border-slate-200"
+      >
+        <h3
+          id="confirmTitle"
+          class="text-base font-semibold text-slate-800 mb-1"
+        ></h3>
+        <p
+          id="confirmMessage"
+          class="text-sm text-slate-600 mb-4 leading-relaxed"
+        ></p>
+        <div class="flex justify-end gap-2">
+          <button
+            type="button"
+            id="confirmCancel"
+            class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+          >
+            ยกเลิก
+          </button>
+          <button
+            type="button"
+            id="confirmOk"
+            class="inline-flex items-center justify-center rounded-lg border border-blue-600 bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+          >
+            ยืนยัน
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const demContainer = document.getElementById("demItemsContainer");
+      const btnAddDemItem = document.getElementById("btnAddDemItem");
+      const form = document.getElementById("demSurveyForm");
+
+      const confirmModal = document.getElementById("confirmModal");
+      const confirmTitle = document.getElementById("confirmTitle");
+      const confirmMessage = document.getElementById("confirmMessage");
+      const confirmCancel = document.getElementById("confirmCancel");
+      const confirmOk = document.getElementById("confirmOk");
+      let confirmCallback = null;
+
+      // เก็บข้อมูล reference จากชีท
+      let REF_DATA = null;
+
+      function openConfirmModal(title, message, onConfirm) {
+        confirmTitle.textContent = title;
+        confirmMessage.textContent = message;
+        confirmCallback = onConfirm;
+        confirmModal.classList.remove("hidden");
+        confirmModal.classList.add("flex");
+      }
+
+      function closeConfirmModal() {
+        confirmModal.classList.add("hidden");
+        confirmModal.classList.remove("flex");
+        confirmCallback = null;
+      }
+
+      confirmCancel.addEventListener("click", closeConfirmModal);
+      confirmOk.addEventListener("click", () => {
+        if (typeof confirmCallback === "function") {
+          confirmCallback();
+        }
+        closeConfirmModal();
+      });
+      confirmModal.addEventListener("click", (e) => {
+        if (e.target === confirmModal) {
+          closeConfirmModal();
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeConfirmModal();
+        }
+      });
+
+      // เติมปี พ.ศ. แบบ fix range 2539 - 2568
+      function populateYearSelects() {
+        const selects = document.querySelectorAll(".year-select");
+        const startBE = 2539;
+        const endBE = 2568;
+
+        selects.forEach((sel) => {
+          if (sel.options.length > 1) return; // มีปีแล้ว ไม่ต้องเติมซ้ำ
+          for (let y = endBE; y >= startBE; y--) {
+            const opt = document.createElement("option");
+            opt.value = y;
+            opt.textContent = y.toString();
+            sel.appendChild(opt);
+          }
+        });
+      }
+
+      function updateDemIndexes() {
+        const items = demContainer.querySelectorAll(".dem-item");
+        items.forEach((item, index) => {
+          item.querySelector(".dem-index").textContent = "#" + (index + 1);
+          const removeBtn = item.querySelector(".btn-remove-dem-item");
+          if (items.length === 1) {
+            removeBtn.classList.add("hidden");
+          } else {
+            removeBtn.classList.remove("hidden");
+          }
+        });
+      }
+
+      function setSectionVisibility(card, visible) {
+        const body = card.querySelector(".section-body");
+        const toggleBtn = card.querySelector(".section-toggle");
+        if (!body || !toggleBtn) return;
+
+        const label = toggleBtn.querySelector(".toggle-label");
+
+        if (visible) {
+          body.classList.remove("hidden");
+          toggleBtn.dataset.state = "shown";
+          if (label) label.textContent = "ซ่อน";
+        } else {
+          body.classList.add("hidden");
+          toggleBtn.dataset.state = "hidden";
+          if (label) label.textContent = "แสดง";
+        }
+      }
+
+      function attachSectionToggles(item) {
+        const cards = item.querySelectorAll(".section-card");
+
+        // ค่าเริ่มต้น: แสดง A ซ่อน B–D
+        cards.forEach((card, idx) => {
+          setSectionVisibility(card, idx === 0);
+        });
+
+        // toggle แต่ละ section
+        cards.forEach((card) => {
+          const body = card.querySelector(".section-body");
+          const toggleBtn = card.querySelector(".section-toggle");
+          if (!body || !toggleBtn) return;
+
+          toggleBtn.addEventListener("click", () => {
+            const currentlyHidden = body.classList.contains("hidden");
+            setSectionVisibility(card, currentlyHidden);
+          });
+        });
+
+        // toggle ทั้งหมดใน item
+        const itemToggle = item.querySelector(".item-toggle-all");
+        if (itemToggle) {
+          const labelAll = itemToggle.querySelector(".toggle-label");
+
+          const refreshItemToggleState = () => {
+            const innerCards = item.querySelectorAll(".section-card");
+            const anyHidden = Array.from(innerCards).some((c) =>
+              c.querySelector(".section-body").classList.contains("hidden")
+            );
+            itemToggle.dataset.state = anyHidden ? "hidden" : "shown";
+            if (labelAll) labelAll.textContent = anyHidden ? "แสดง" : "ซ่อน";
+          };
+
+          refreshItemToggleState();
+
+          itemToggle.addEventListener("click", () => {
+            const makeVisible = itemToggle.dataset.state === "hidden";
+            const innerCards = item.querySelectorAll(".section-card");
+            innerCards.forEach((card) =>
+              setSectionVisibility(card, makeVisible)
+            );
+            itemToggle.dataset.state = makeVisible ? "shown" : "hidden";
+            if (labelAll)
+              labelAll.textContent = makeVisible ? "ซ่อน" : "แสดง";
+          });
+
+          // เวลามีการ toggle section ใด ๆ ให้ sync สถานะปุ่มรวม
+          cards.forEach((card) => {
+            const btn = card.querySelector(".section-toggle");
+            if (!btn) return;
+            btn.addEventListener("click", () => {
+              setTimeout(refreshItemToggleState, 0);
+            });
+          });
+        }
+      }
+
+      // เติม options ลง select จาก REF_DATA
+      function populateSelectOptions(selectEl, values) {
+        if (!selectEl) return;
+        const currentSelected = Array.from(selectEl.options)
+          .filter((o) => o.selected)
+          .map((o) => o.value);
+        selectEl.innerHTML = "";
+        (values || []).forEach((val) => {
+          const opt = document.createElement("option");
+          opt.value = val;
+          opt.textContent = val;
+          if (currentSelected.includes(val)) {
+            opt.selected = true;
+          }
+          selectEl.appendChild(opt);
+        });
+      }
+
+      function applyReferenceDataToAllItems() {
+        if (!REF_DATA) return;
+        const basins = REF_DATA.basins || [];
+        const provinces = REF_DATA.provinces || [];
+
+        document
+          .querySelectorAll(".basin-select")
+          .forEach((sel) => populateSelectOptions(sel, basins));
+        document
+          .querySelectorAll(".province-select")
+          .forEach((sel) => populateSelectOptions(sel, provinces));
+      }
+
+      function initReferenceDropdowns() {
+        if (
+          typeof google === "undefined" ||
+          !google.script ||
+          !google.script.run
+        ) {
+          console.log(
+            "Not running inside Apps Script Web App, reference dropdowns will be empty."
+          );
+          return;
+        }
+        google.script.run
+          .withSuccessHandler((data) => {
+            REF_DATA = data || { basins: [], provinces: [] };
+            applyReferenceDataToAllItems();
+          })
+          .withFailureHandler((err) => {
+            console.error("getReferenceData error", err);
+          })
+          .getReferenceData();
+      }
+
+      function attachOtherFieldHandlers(item) {
+        attachSectionToggles(item);
+
+        // helper: Tag Stack (ลุ่มน้ำ / จังหวัด) - ใช้ดับเบิ้ลคลิกเท่านั้น
+        function setupTagStack(selectEl, tagsContainer, hiddenInput) {
+          if (!selectEl || !tagsContainer || !hiddenInput) return;
+
+          let values = [];
+
+          function renderTags() {
+            tagsContainer.innerHTML = "";
+            values.forEach((val) => {
+              const span = document.createElement("span");
+              span.className = "tag-pill";
+              span.dataset.value = val;
+              span.innerHTML = `
+                <span class="tag-text">${val}</span>
+                <span class="tag-remove">×</span>
+              `;
+              tagsContainer.appendChild(span);
+            });
+            hiddenInput.value = values.join(", ");
+          }
+
+          function addValue(val) {
+            const v = (val || "").trim();
+            if (!v) return;
+            if (values.includes(v)) return;
+            values.push(v);
+            renderTags();
+          }
+
+          function removeValue(val) {
+            const idx = values.indexOf(val);
+            if (idx === -1) return;
+            values.splice(idx, 1);
+            renderTags();
+          }
+
+          // ดับเบิ้ลคลิกที่ option = toggle เพิ่ม/เอาออกจาก stack
+          selectEl.addEventListener("dblclick", () => {
+            const opt = selectEl.options[selectEl.selectedIndex];
+            const text = opt ? opt.textContent.trim() : "";
+            if (!text) return;
+            if (values.includes(text)) {
+              removeValue(text);
+            } else {
+              addValue(text);
+            }
+          });
+
+          // ดับเบิ้ลคลิกที่ tag = ลบออก
+          tagsContainer.addEventListener("dblclick", (e) => {
+            const pill = e.target.closest(".tag-pill");
+            if (!pill) return;
+            const v = pill.dataset.value;
+            removeValue(v);
+          });
+        }
+
+        // helper: Search filter dropdown (ซ่อน option ไม่ตรง)
+        function setupSearchFilter(selectEl, searchInput) {
+          if (!selectEl || !searchInput) return;
+          const allOptions = Array.from(selectEl.options);
+
+          searchInput.addEventListener("input", () => {
+            const term = searchInput.value.toLowerCase();
+            allOptions.forEach((opt) => {
+              const match = opt.textContent.toLowerCase().includes(term);
+              opt.hidden = !match;
+            });
+          });
+        }
+
+        // 2. แหล่งที่มา
+        const sourceSelect = item.querySelector(".source-select");
+        const sourceOtherWrapper = item.querySelector(".source-other-wrapper");
+        const sourceOtherInput = item.querySelector(".source-other-input");
+        if (sourceSelect && sourceOtherWrapper && sourceOtherInput) {
+          sourceSelect.addEventListener("change", () => {
+            const show = sourceSelect.value === "other";
+            sourceOtherWrapper.classList.toggle("hidden", !show);
+            sourceOtherInput.disabled = !show;
+            if (show) {
+              sourceOtherInput.focus();
+            } else {
+              sourceOtherInput.value = "";
+            }
+          });
+        }
+
+        // 5. Resolution
+        const resSelect = item.querySelector(".resolution-select");
+        const resOtherWrapper = item.querySelector(
+          ".resolution-other-wrapper"
+        );
+        const resOtherInput = item.querySelector(".resolution-other-input");
+        if (resSelect && resOtherWrapper && resOtherInput) {
+          resSelect.addEventListener("change", () => {
+            const show =
+              resSelect.value === "lidar_sub1m" ||
+              resSelect.value === "other";
+            resOtherWrapper.classList.toggle("hidden", !show);
+            resOtherInput.disabled = !show;
+            if (show) {
+              resOtherInput.focus();
+            } else {
+              resOtherInput.value = "";
+            }
+          });
+        }
+
+        // 8. Vertical Datum
+        const vDatumSelect = item.querySelector(".vertical-datum-select");
+        const vDatumWrapper = item.querySelector(
+          ".vertical-datum-other-wrapper"
+        );
+        const vDatumInput = item.querySelector(".vertical-datum-other-input");
+        if (vDatumSelect && vDatumWrapper && vDatumInput) {
+          vDatumSelect.addEventListener("change", () => {
+            const show = vDatumSelect.value === "other";
+            vDatumWrapper.classList.toggle("hidden", !show);
+            vDatumInput.disabled = !show;
+            if (show) {
+              vDatumInput.focus();
+            } else {
+              vDatumInput.value = "";
+            }
+          });
+        }
+
+        // 9. Coordinate System
+        const coordSelect = item.querySelector(".coord-select");
+        const coordWrapper = item.querySelector(".coord-other-wrapper");
+        const coordInput = item.querySelector(".coord-other-input");
+        if (coordSelect && coordWrapper && coordInput) {
+          coordSelect.addEventListener("change", () => {
+            const show = coordSelect.value === "other";
+            coordWrapper.classList.toggle("hidden", !show);
+            coordInput.disabled = !show;
+            if (show) {
+              coordInput.focus();
+            } else {
+              coordInput.value = "";
+            }
+          });
+        }
+
+        // 13. License
+        const licSelect = item.querySelector(".license-select");
+        const licWrapper = item.querySelector(".license-other-wrapper");
+        const licInput = item.querySelector(".license-other-input");
+        if (licSelect && licWrapper && licInput) {
+          licSelect.addEventListener("change", () => {
+            const show = licSelect.value === "other";
+            licWrapper.classList.toggle("hidden", !show);
+            licInput.disabled = !show;
+            if (show) {
+              licInput.focus();
+            } else {
+              licInput.value = "";
+            }
+          });
+        }
+
+        // Toggle ลุ่มน้ำ / จังหวัด
+        const basinToggle = item.querySelector(".toggle-basin");
+        const basinBlock = item.querySelector(".basin-block");
+        if (basinToggle && basinBlock) {
+          basinToggle.addEventListener("change", () => {
+            basinBlock.classList.toggle("hidden", !basinToggle.checked);
+          });
+        }
+
+        const provinceToggle = item.querySelector(".toggle-province");
+        const provinceBlock = item.querySelector(".province-block");
+        if (provinceToggle && provinceBlock) {
+          provinceToggle.addEventListener("change", () => {
+            provinceBlock.classList.toggle("hidden", !provinceToggle.checked);
+          });
+        }
+
+        // พื้นที่เฉพาะจุด: กล่องซ่อนเมื่อไม่เช็ค
+        const localToggle = item.querySelector(".toggle-local");
+        const localInput = item.querySelector(".local-input");
+        const localBlock = item.querySelector(".local-block");
+        if (localToggle && localInput && localBlock) {
+          localToggle.addEventListener("change", () => {
+            const show = localToggle.checked;
+            localBlock.classList.toggle("hidden", !show);
+            localInput.disabled = !show;
+            if (!show) {
+              localInput.value = "";
+            }
+          });
+        }
+
+        // Tag Stack: ลุ่มน้ำ
+        const basinSelect = item.querySelector(".basin-select");
+        const basinTags = item.querySelector(".basin-tags");
+        const basinHidden = item.querySelector(".basin-other-input");
+        setupTagStack(basinSelect, basinTags, basinHidden);
+
+        // Tag Stack: จังหวัด
+        const provinceSelect = item.querySelector(".province-select");
+        const provinceTags = item.querySelector(".province-tags");
+        const provinceHidden = item.querySelector(".province-other-input");
+        setupTagStack(provinceSelect, provinceTags, provinceHidden);
+
+        // Search filter: ลุ่มน้ำ
+        const basinSearch = item.querySelector(".basin-search");
+        setupSearchFilter(basinSelect, basinSearch);
+
+        // Search filter: จังหวัด
+        const provinceSearch = item.querySelector(".province-search");
+        setupSearchFilter(provinceSelect, provinceSearch);
+
+        // ปุ่มลบรายการ DEM
+        const removeBtn = item.querySelector(".btn-remove-dem-item");
+        if (removeBtn) {
+          removeBtn.addEventListener("click", () => {
+            item.remove();
+            updateDemIndexes();
+          });
+        }
+      }
+
+      const firstItem = demContainer.querySelector(".dem-item");
+      attachOtherFieldHandlers(firstItem);
+      populateYearSelects();
+      updateDemIndexes();
+      initReferenceDropdowns();
+
+      // เพิ่ม DEM item ใหม่
+      btnAddDemItem.addEventListener("click", () => {
+        const first = demContainer.querySelector(".dem-item");
+        const clone = first.cloneNode(true);
+
+        // ล้างค่าทุก input/textarea/select
+        clone.querySelectorAll("input, textarea, select").forEach((el) => {
+          if (el.tagName === "SELECT") {
+            // เคลียร์เลือก แต่เก็บ options ไว้
+            el.selectedIndex = 0;
+          } else if (el.type === "checkbox" || el.type === "radio") {
+            el.checked = false;
+          } else {
+            el.value = "";
+          }
+          if (el.classList.contains("local-input")) {
+            el.disabled = true;
+          }
+        });
+
+        // ซ่อน wrapper "อื่น ๆ" และ disable
+        clone
+          .querySelectorAll(
+            ".source-other-wrapper, .resolution-other-wrapper, .vertical-datum-other-wrapper, .coord-other-wrapper, .license-other-wrapper"
+          )
+          .forEach((wrap) => {
+            wrap.classList.add("hidden");
+          });
+
+        clone
+          .querySelectorAll(
+            ".source-other-input, .resolution-other-input, .vertical-datum-other-input, .coord-other-input, .license-other-input"
+          )
+          .forEach((inp) => {
+            inp.disabled = true;
+            inp.value = "";
+          });
+
+        // ซ่อน block ลุ่มน้ำ/จังหวัด
+        clone
+          .querySelectorAll(".basin-block, .province-block")
+          .forEach((b) => {
+            b.classList.add("hidden");
+          });
+
+        // ซ่อน local-block
+        const cloneLocalBlock = clone.querySelector(".local-block");
+        const cloneLocalInput = clone.querySelector(".local-input");
+        const cloneLocalToggle = clone.querySelector(".toggle-local");
+        if (cloneLocalBlock && cloneLocalInput && cloneLocalToggle) {
+          cloneLocalBlock.classList.add("hidden");
+          cloneLocalInput.disabled = true;
+          cloneLocalInput.value = "";
+          cloneLocalToggle.checked = false;
+        }
+
+        // ล้าง tags
+        clone
+          .querySelectorAll(".basin-tags, .province-tags")
+          .forEach((c) => {
+            c.innerHTML = "";
+          });
+
+        // ล้าง hidden field ของลุ่มน้ำ/จังหวัด
+        clone
+          .querySelectorAll(".basin-other-input, .province-other-input")
+          .forEach((inp) => {
+            inp.value = "";
+          });
+
+        demContainer.appendChild(clone);
+        attachOtherFieldHandlers(clone);
+        populateYearSelects();
+        updateDemIndexes();
+        applyReferenceDataToAllItems();
+      });
+
+      const resetBtn = document.getElementById("btnResetForm");
+
+      resetBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        openConfirmModal(
+          "ยืนยันล้างข้อมูล",
+          "คุณต้องการล้างค่าทั้งหมดในแบบฟอร์มหรือไม่?",
+          () => {
+            form.reset();
+
+            // เคลียร์ block coverage / tag / local input / search filter
+            const items = demContainer.querySelectorAll(".dem-item");
+            items.forEach((item, idx) => {
+              if (idx > 0) {
+                item.remove();
+                return;
+              }
+              const basinBlock = item.querySelector(".basin-block");
+              const provinceBlock = item.querySelector(".province-block");
+              const basinTags = item.querySelector(".basin-tags");
+              const provinceTags = item.querySelector(".province-tags");
+              const basinHidden = item.querySelector(".basin-other-input");
+              const provinceHidden =
+                item.querySelector(".province-other-input");
+              const localInput = item.querySelector(".local-input");
+              const localToggle = item.querySelector(".toggle-local");
+              const localBlock = item.querySelector(".local-block");
+              const basinSearch = item.querySelector(".basin-search");
+              const provinceSearch = item.querySelector(".province-search");
+              const basinSelect = item.querySelector(".basin-select");
+              const provinceSelect = item.querySelector(".province-select");
+
+              if (basinBlock) basinBlock.classList.add("hidden");
+              if (provinceBlock) provinceBlock.classList.add("hidden");
+              if (basinTags) basinTags.innerHTML = "";
+              if (provinceTags) provinceTags.innerHTML = "";
+              if (basinHidden) basinHidden.value = "";
+              if (provinceHidden) provinceHidden.value = "";
+
+              if (localBlock) localBlock.classList.add("hidden");
+              if (localInput) {
+                localInput.value = "";
+                localInput.disabled = true;
+              }
+              if (localToggle) localToggle.checked = false;
+
+              if (basinSearch) basinSearch.value = "";
+              if (provinceSearch) provinceSearch.value = "";
+              if (basinSelect) {
+                Array.from(basinSelect.options).forEach((opt) => {
+                  opt.hidden = false;
+                });
+              }
+              if (provinceSelect) {
+                Array.from(provinceSelect.options).forEach((opt) => {
+                  opt.hidden = false;
+                });
+              }
+            });
+
+            updateDemIndexes();
+            applyReferenceDataToAllItems();
+          }
+        );
+      });
+
+      // helper: ดึงค่าจาก checkbox ภายใน container
+      function getCheckedValues(container, selector) {
+        return Array.from(container.querySelectorAll(selector + ":checked")).map(
+          (el) => el.value
+        );
+      }
+
+      // ดึงข้อมูลจาก form เพื่อส่งไป Apps Script
+      function collectFormData() {
+        const agency = {
+          agencyName: document.getElementById("agencyName").value.trim(),
+          subUnit: document.getElementById("subUnit").value.trim(),
+          contactName: document.getElementById("contactName").value.trim(),
+          contactPosition:
+            document.getElementById("contactPosition").value.trim(),
+          contactPhone: document.getElementById("contactPhone").value.trim(),
+          contactEmail: document.getElementById("contactEmail").value.trim(),
+        };
+
+        const items = [];
+        const demItems = demContainer.querySelectorAll(".dem-item");
+        demItems.forEach((item) => {
+          const itemData = {};
+
+          itemData.demName =
+            item.querySelector('input[name="demName[]"]')?.value.trim() || "";
+          itemData.sourceType =
+            item.querySelector('select[name="sourceType[]"]')?.value || "";
+          itemData.sourceOther =
+            item.querySelector('input[name="sourceOther[]"]')?.value.trim() ||
+            "";
+          itemData.year =
+            item.querySelector('select[name="year[]"]')?.value || "";
+
+          // coverage
+          itemData.coverageCountry = getCheckedValues(
+            item,
+            'input[name="coverageCountry[]"]'
+          );
+
+          const basinSelect = item.querySelector(
+            'select[name="coverageBasin[]"]'
+          );
+          itemData.coverageBasinSelect = basinSelect
+            ? Array.from(basinSelect.options)
+                .filter((o) => o.selected)
+                .map((o) => o.value)
+            : [];
+          itemData.coverageBasinTags =
+            item.querySelector(".basin-other-input")?.value.trim() || "";
+
+          const provinceSelect = item.querySelector(
+            'select[name="coverageProvince[]"]'
+          );
+          itemData.coverageProvinceSelect = provinceSelect
+            ? Array.from(provinceSelect.options)
+                .filter((o) => o.selected)
+                .map((o) => o.value)
+            : [];
+          itemData.coverageProvinceTags =
+            item.querySelector(".province-other-input")?.value.trim() || "";
+
+          itemData.coverageLocal =
+            item.querySelector('input[name="coverageLocal[]"]')?.value.trim() ||
+            "";
+
+          // technical
+          itemData.resolution =
+            item.querySelector('select[name="resolution[]"]')?.value || "";
+          itemData.resolutionOther =
+            item.querySelector('input[name="resolutionOther[]"]')?.value.trim() ||
+            "";
+          itemData.verticalAccuracy =
+            item.querySelector('input[name="verticalAccuracy[]"]')?.value ||
+            "";
+          itemData.horizontalAccuracy =
+            item.querySelector('input[name="horizontalAccuracy[]"]')?.value ||
+            "";
+          itemData.verticalDatum =
+            item.querySelector('select[name="verticalDatum[]"]')?.value || "";
+          itemData.verticalDatumOther =
+            item.querySelector('input[name="verticalDatumOther[]"]')?.value.trim() ||
+            "";
+          itemData.coordSys =
+            item.querySelector('select[name="coordSys[]"]')?.value || "";
+          itemData.coordSysOther =
+            item.querySelector('input[name="coordSysOther[]"]')?.value.trim() ||
+            "";
+
+          // DEM Methods / File Formats / Access / QC / Uses
+          itemData.demMethods = getCheckedValues(
+            item,
+            'input[name^="demMethod"]'
+          );
+          const demMethodOtherText =
+            item.querySelector('input[name="demMethodOther[]"]')?.value.trim() ||
+            "";
+          if (demMethodOtherText) {
+            itemData.demMethods.push(demMethodOtherText);
+          }
+
+          itemData.fileFormats = getCheckedValues(
+            item,
+            'input[name^="format"]'
+          );
+          const formatOtherText =
+            item.querySelector('input[name="formatOther[]"]')?.value.trim() ||
+            "";
+          if (formatOtherText) {
+            itemData.fileFormats.push(formatOtherText);
+          }
+
+          itemData.fileSize =
+            item.querySelector('input[name="fileSize[]"]')?.value || "";
+          itemData.fileSizeUnit =
+            item.querySelector('select[name="fileSizeUnit[]"]')?.value || "";
+
+          itemData.license =
+            item.querySelector('select[name="license[]"]')?.value || "";
+          itemData.licenseOther =
+            item.querySelector('input[name="licenseOther[]"]')?.value.trim() ||
+            "";
+
+          itemData.accessChannels = getCheckedValues(
+            item,
+            'input[name^="access"]'
+          );
+          itemData.accessOther =
+            item.querySelector('input[name="accessOther[]"]')?.value.trim() ||
+            "";
+
+          itemData.qcQa = getCheckedValues(item, 'input[name^="qc"]');
+          itemData.qcQaOther =
+            item.querySelector('input[name="qcOther[]"]')?.value.trim() || "";
+
+          itemData.mainUses = getCheckedValues(item, 'input[name^="use"]');
+          itemData.mainUsesOther =
+            item.querySelector('input[name="useOther[]"]')?.value.trim() || "";
+
+          itemData.remark =
+            item.querySelector('textarea[name="remark[]"]')?.value.trim() ||
+            "";
+
+          items.push(itemData);
+        });
+
+        return {
+          agency,
+          items,
+        };
+      }
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        openConfirmModal(
+          "ยืนยันการส่งแบบฟอร์ม",
+          "โปรดตรวจสอบข้อมูลให้ถูกต้อง ก่อนยืนยันการส่งแบบฟอร์ม",
+          () => {
+            const payload = collectFormData();
+
+            if (
+              typeof google === "undefined" ||
+              !google.script ||
+              !google.script.run
+            ) {
+              alert(
+                "ยังไม่ได้รันใน Google Apps Script Web App\nดูข้อมูลที่ console แทน"
+              );
+              console.log("payload", payload);
+              return;
+            }
+
+            google.script.run
+              .withSuccessHandler((res) => {
+                alert("บันทึกข้อมูลเรียบร้อยแล้ว");
+                // reset ฟอร์มเหลือเพียง DEM item แรก
+                form.reset();
+                const items = demContainer.querySelectorAll(".dem-item");
+                items.forEach((item, idx) => {
+                  if (idx > 0) {
+                    item.remove();
+                  }
+                });
+                const first = demContainer.querySelector(".dem-item");
+                if (first) {
+                  attachOtherFieldHandlers(first);
+                }
+                populateYearSelects();
+                updateDemIndexes();
+                applyReferenceDataToAllItems();
+              })
+              .withFailureHandler((err) => {
+                console.error("submitDemSurvey error", err);
+                alert(
+                  "เกิดข้อผิดพลาดในการบันทึกข้อมูล: " +
+                    (err && err.message ? err.message : err)
+                );
+              })
+              .submitDemSurvey(payload);
+          }
+        );
+      });
+    </script>
+  </body>
+</html>
