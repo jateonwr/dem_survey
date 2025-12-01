@@ -1175,20 +1175,23 @@
     </div>
 
     <script>
+      // ★★ ใส่ URL Web App ของ Apps Script ที่นี่ ★★
+      const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8Wf9vZsQbksaG7dmtWxw2b26xzCxI0Rl1lTlWggIS_rlULBL-wkOjDgRBZuH_vWI5Lw/exec";
+    
       const demContainer = document.getElementById("demItemsContainer");
       const btnAddDemItem = document.getElementById("btnAddDemItem");
       const form = document.getElementById("demSurveyForm");
-
+    
       const confirmModal = document.getElementById("confirmModal");
       const confirmTitle = document.getElementById("confirmTitle");
       const confirmMessage = document.getElementById("confirmMessage");
       const confirmCancel = document.getElementById("confirmCancel");
       const confirmOk = document.getElementById("confirmOk");
       let confirmCallback = null;
-
+    
       // เก็บข้อมูล reference จากชีท
       let REF_DATA = null;
-
+    
       function openConfirmModal(title, message, onConfirm) {
         confirmTitle.textContent = title;
         confirmMessage.textContent = message;
@@ -1196,13 +1199,13 @@
         confirmModal.classList.remove("hidden");
         confirmModal.classList.add("flex");
       }
-
+    
       function closeConfirmModal() {
         confirmModal.classList.add("hidden");
         confirmModal.classList.remove("flex");
         confirmCallback = null;
       }
-
+    
       confirmCancel.addEventListener("click", closeConfirmModal);
       confirmOk.addEventListener("click", () => {
         if (typeof confirmCallback === "function") {
@@ -1220,15 +1223,15 @@
           closeConfirmModal();
         }
       });
-
-      // เติมปี พ.ศ. แบบ fix range 2539 - 2568
+    
+      // เติมปี พ.ศ. 2539–2568
       function populateYearSelects() {
         const selects = document.querySelectorAll(".year-select");
         const startBE = 2539;
         const endBE = 2568;
-
+    
         selects.forEach((sel) => {
-          if (sel.options.length > 1) return; // มีปีแล้ว ไม่ต้องเติมซ้ำ
+          if (sel.options.length > 1) return;
           for (let y = endBE; y >= startBE; y--) {
             const opt = document.createElement("option");
             opt.value = y;
@@ -1237,7 +1240,7 @@
           }
         });
       }
-
+    
       function updateDemIndexes() {
         const items = demContainer.querySelectorAll(".dem-item");
         items.forEach((item, index) => {
@@ -1250,14 +1253,12 @@
           }
         });
       }
-
+    
       function setSectionVisibility(card, visible) {
         const body = card.querySelector(".section-body");
         const toggleBtn = card.querySelector(".section-toggle");
         if (!body || !toggleBtn) return;
-
         const label = toggleBtn.querySelector(".toggle-label");
-
         if (visible) {
           body.classList.remove("hidden");
           toggleBtn.dataset.state = "shown";
@@ -1268,32 +1269,30 @@
           if (label) label.textContent = "แสดง";
         }
       }
-
+    
       function attachSectionToggles(item) {
         const cards = item.querySelectorAll(".section-card");
-
-        // ค่าเริ่มต้น: แสดง A ซ่อน B–D
+    
+        // เริ่มต้น: แสดงเฉพาะ A
         cards.forEach((card, idx) => {
           setSectionVisibility(card, idx === 0);
         });
-
-        // toggle แต่ละ section
+    
         cards.forEach((card) => {
           const body = card.querySelector(".section-body");
           const toggleBtn = card.querySelector(".section-toggle");
           if (!body || !toggleBtn) return;
-
+    
           toggleBtn.addEventListener("click", () => {
             const currentlyHidden = body.classList.contains("hidden");
             setSectionVisibility(card, currentlyHidden);
           });
         });
-
-        // toggle ทั้งหมดใน item
+    
         const itemToggle = item.querySelector(".item-toggle-all");
         if (itemToggle) {
           const labelAll = itemToggle.querySelector(".toggle-label");
-
+    
           const refreshItemToggleState = () => {
             const innerCards = item.querySelectorAll(".section-card");
             const anyHidden = Array.from(innerCards).some((c) =>
@@ -1302,9 +1301,9 @@
             itemToggle.dataset.state = anyHidden ? "hidden" : "shown";
             if (labelAll) labelAll.textContent = anyHidden ? "แสดง" : "ซ่อน";
           };
-
+    
           refreshItemToggleState();
-
+    
           itemToggle.addEventListener("click", () => {
             const makeVisible = itemToggle.dataset.state === "hidden";
             const innerCards = item.querySelectorAll(".section-card");
@@ -1312,11 +1311,9 @@
               setSectionVisibility(card, makeVisible)
             );
             itemToggle.dataset.state = makeVisible ? "shown" : "hidden";
-            if (labelAll)
-              labelAll.textContent = makeVisible ? "ซ่อน" : "แสดง";
+            if (labelAll) labelAll.textContent = makeVisible ? "ซ่อน" : "แสดง";
           });
-
-          // เวลามีการ toggle section ใด ๆ ให้ sync สถานะปุ่มรวม
+    
           cards.forEach((card) => {
             const btn = card.querySelector(".section-toggle");
             if (!btn) return;
@@ -1326,8 +1323,9 @@
           });
         }
       }
-
-      // เติม options ลง select จาก REF_DATA
+    
+      // ------ ส่วน reference dropdown จาก Apps Script (GET) ------
+    
       function populateSelectOptions(selectEl, values) {
         if (!selectEl) return;
         const currentSelected = Array.from(selectEl.options)
@@ -1338,18 +1336,16 @@
           const opt = document.createElement("option");
           opt.value = val;
           opt.textContent = val;
-          if (currentSelected.includes(val)) {
-            opt.selected = true;
-          }
+          if (currentSelected.includes(val)) opt.selected = true;
           selectEl.appendChild(opt);
         });
       }
-
+    
       function applyReferenceDataToAllItems() {
         if (!REF_DATA) return;
         const basins = REF_DATA.basins || [];
         const provinces = REF_DATA.provinces || [];
-
+    
         document
           .querySelectorAll(".basin-select")
           .forEach((sel) => populateSelectOptions(sel, basins));
@@ -1357,38 +1353,28 @@
           .querySelectorAll(".province-select")
           .forEach((sel) => populateSelectOptions(sel, provinces));
       }
-
-      function initReferenceDropdowns() {
-        if (
-          typeof google === "undefined" ||
-          !google.script ||
-          !google.script.run
-        ) {
-          console.log(
-            "Not running inside Apps Script Web App, reference dropdowns will be empty."
-          );
-          return;
+    
+      async function initReferenceDropdowns() {
+        try {
+          const resp = await fetch(APPS_SCRIPT_URL + "?action=getReferenceData");
+          const data = await resp.json();
+          REF_DATA = data || { basins: [], provinces: [] };
+          applyReferenceDataToAllItems();
+        } catch (err) {
+          console.error("getReferenceData error", err);
         }
-        google.script.run
-          .withSuccessHandler((data) => {
-            REF_DATA = data || { basins: [], provinces: [] };
-            applyReferenceDataToAllItems();
-          })
-          .withFailureHandler((err) => {
-            console.error("getReferenceData error", err);
-          })
-          .getReferenceData();
       }
-
+    
+      // ------ handler field ต่าง ๆ ในแต่ละ DEM item ------
+    
       function attachOtherFieldHandlers(item) {
         attachSectionToggles(item);
-
-        // helper: Tag Stack (ลุ่มน้ำ / จังหวัด) - ใช้ดับเบิ้ลคลิกเท่านั้น
+    
+        // helper Tag Stack (ลุ่มน้ำ / จังหวัด)
         function setupTagStack(selectEl, tagsContainer, hiddenInput) {
           if (!selectEl || !tagsContainer || !hiddenInput) return;
-
           let values = [];
-
+    
           function renderTags() {
             tagsContainer.innerHTML = "";
             values.forEach((val) => {
@@ -1403,23 +1389,21 @@
             });
             hiddenInput.value = values.join(", ");
           }
-
+    
           function addValue(val) {
             const v = (val || "").trim();
-            if (!v) return;
-            if (values.includes(v)) return;
+            if (!v || values.includes(v)) return;
             values.push(v);
             renderTags();
           }
-
+    
           function removeValue(val) {
             const idx = values.indexOf(val);
             if (idx === -1) return;
             values.splice(idx, 1);
             renderTags();
           }
-
-          // ดับเบิ้ลคลิกที่ option = toggle เพิ่ม/เอาออกจาก stack
+    
           selectEl.addEventListener("dblclick", () => {
             const opt = selectEl.options[selectEl.selectedIndex];
             const text = opt ? opt.textContent.trim() : "";
@@ -1430,8 +1414,7 @@
               addValue(text);
             }
           });
-
-          // ดับเบิ้ลคลิกที่ tag = ลบออก
+    
           tagsContainer.addEventListener("dblclick", (e) => {
             const pill = e.target.closest(".tag-pill");
             if (!pill) return;
@@ -1439,12 +1422,10 @@
             removeValue(v);
           });
         }
-
-        // helper: Search filter dropdown (ซ่อน option ไม่ตรง)
+    
         function setupSearchFilter(selectEl, searchInput) {
           if (!selectEl || !searchInput) return;
           const allOptions = Array.from(selectEl.options);
-
           searchInput.addEventListener("input", () => {
             const term = searchInput.value.toLowerCase();
             allOptions.forEach((opt) => {
@@ -1453,7 +1434,7 @@
             });
           });
         }
-
+    
         // 2. แหล่งที่มา
         const sourceSelect = item.querySelector(".source-select");
         const sourceOtherWrapper = item.querySelector(".source-other-wrapper");
@@ -1463,54 +1444,40 @@
             const show = sourceSelect.value === "other";
             sourceOtherWrapper.classList.toggle("hidden", !show);
             sourceOtherInput.disabled = !show;
-            if (show) {
-              sourceOtherInput.focus();
-            } else {
-              sourceOtherInput.value = "";
-            }
+            if (show) sourceOtherInput.focus();
+            else sourceOtherInput.value = "";
           });
         }
-
+    
         // 5. Resolution
         const resSelect = item.querySelector(".resolution-select");
-        const resOtherWrapper = item.querySelector(
-          ".resolution-other-wrapper"
-        );
+        const resOtherWrapper = item.querySelector(".resolution-other-wrapper");
         const resOtherInput = item.querySelector(".resolution-other-input");
         if (resSelect && resOtherWrapper && resOtherInput) {
           resSelect.addEventListener("change", () => {
             const show =
-              resSelect.value === "lidar_sub1m" ||
-              resSelect.value === "other";
+              resSelect.value === "lidar_sub1m" || resSelect.value === "other";
             resOtherWrapper.classList.toggle("hidden", !show);
             resOtherInput.disabled = !show;
-            if (show) {
-              resOtherInput.focus();
-            } else {
-              resOtherInput.value = "";
-            }
+            if (show) resOtherInput.focus();
+            else resOtherInput.value = "";
           });
         }
-
+    
         // 8. Vertical Datum
         const vDatumSelect = item.querySelector(".vertical-datum-select");
-        const vDatumWrapper = item.querySelector(
-          ".vertical-datum-other-wrapper"
-        );
+        const vDatumWrapper = item.querySelector(".vertical-datum-other-wrapper");
         const vDatumInput = item.querySelector(".vertical-datum-other-input");
         if (vDatumSelect && vDatumWrapper && vDatumInput) {
           vDatumSelect.addEventListener("change", () => {
             const show = vDatumSelect.value === "other";
             vDatumWrapper.classList.toggle("hidden", !show);
             vDatumInput.disabled = !show;
-            if (show) {
-              vDatumInput.focus();
-            } else {
-              vDatumInput.value = "";
-            }
+            if (show) vDatumInput.focus();
+            else vDatumInput.value = "";
           });
         }
-
+    
         // 9. Coordinate System
         const coordSelect = item.querySelector(".coord-select");
         const coordWrapper = item.querySelector(".coord-other-wrapper");
@@ -1520,14 +1487,11 @@
             const show = coordSelect.value === "other";
             coordWrapper.classList.toggle("hidden", !show);
             coordInput.disabled = !show;
-            if (show) {
-              coordInput.focus();
-            } else {
-              coordInput.value = "";
-            }
+            if (show) coordInput.focus();
+            else coordInput.value = "";
           });
         }
-
+    
         // 13. License
         const licSelect = item.querySelector(".license-select");
         const licWrapper = item.querySelector(".license-other-wrapper");
@@ -1537,15 +1501,12 @@
             const show = licSelect.value === "other";
             licWrapper.classList.toggle("hidden", !show);
             licInput.disabled = !show;
-            if (show) {
-              licInput.focus();
-            } else {
-              licInput.value = "";
-            }
+            if (show) licInput.focus();
+            else licInput.value = "";
           });
         }
-
-        // Toggle ลุ่มน้ำ / จังหวัด
+    
+        // toggle ลุ่มน้ำ / จังหวัด / local
         const basinToggle = item.querySelector(".toggle-basin");
         const basinBlock = item.querySelector(".basin-block");
         if (basinToggle && basinBlock) {
@@ -1553,7 +1514,7 @@
             basinBlock.classList.toggle("hidden", !basinToggle.checked);
           });
         }
-
+    
         const provinceToggle = item.querySelector(".toggle-province");
         const provinceBlock = item.querySelector(".province-block");
         if (provinceToggle && provinceBlock) {
@@ -1561,8 +1522,7 @@
             provinceBlock.classList.toggle("hidden", !provinceToggle.checked);
           });
         }
-
-        // พื้นที่เฉพาะจุด: กล่องซ่อนเมื่อไม่เช็ค
+    
         const localToggle = item.querySelector(".toggle-local");
         const localInput = item.querySelector(".local-input");
         const localBlock = item.querySelector(".local-block");
@@ -1571,33 +1531,28 @@
             const show = localToggle.checked;
             localBlock.classList.toggle("hidden", !show);
             localInput.disabled = !show;
-            if (!show) {
-              localInput.value = "";
-            }
+            if (!show) localInput.value = "";
           });
         }
-
-        // Tag Stack: ลุ่มน้ำ
+    
+        // Tag Stack
         const basinSelect = item.querySelector(".basin-select");
         const basinTags = item.querySelector(".basin-tags");
         const basinHidden = item.querySelector(".basin-other-input");
         setupTagStack(basinSelect, basinTags, basinHidden);
-
-        // Tag Stack: จังหวัด
+    
         const provinceSelect = item.querySelector(".province-select");
         const provinceTags = item.querySelector(".province-tags");
         const provinceHidden = item.querySelector(".province-other-input");
         setupTagStack(provinceSelect, provinceTags, provinceHidden);
-
-        // Search filter: ลุ่มน้ำ
+    
+        // Search filter
         const basinSearch = item.querySelector(".basin-search");
         setupSearchFilter(basinSelect, basinSearch);
-
-        // Search filter: จังหวัด
         const provinceSearch = item.querySelector(".province-search");
         setupSearchFilter(provinceSelect, provinceSearch);
-
-        // ปุ่มลบรายการ DEM
+    
+        // ปุ่มลบ DEM
         const removeBtn = item.querySelector(".btn-remove-dem-item");
         if (removeBtn) {
           removeBtn.addEventListener("click", () => {
@@ -1606,22 +1561,20 @@
           });
         }
       }
-
+    
       const firstItem = demContainer.querySelector(".dem-item");
       attachOtherFieldHandlers(firstItem);
       populateYearSelects();
       updateDemIndexes();
       initReferenceDropdowns();
-
+    
       // เพิ่ม DEM item ใหม่
       btnAddDemItem.addEventListener("click", () => {
         const first = demContainer.querySelector(".dem-item");
         const clone = first.cloneNode(true);
-
-        // ล้างค่าทุก input/textarea/select
+    
         clone.querySelectorAll("input, textarea, select").forEach((el) => {
           if (el.tagName === "SELECT") {
-            // เคลียร์เลือก แต่เก็บ options ไว้
             el.selectedIndex = 0;
           } else if (el.type === "checkbox" || el.type === "radio") {
             el.checked = false;
@@ -1632,16 +1585,13 @@
             el.disabled = true;
           }
         });
-
-        // ซ่อน wrapper "อื่น ๆ" และ disable
+    
         clone
           .querySelectorAll(
             ".source-other-wrapper, .resolution-other-wrapper, .vertical-datum-other-wrapper, .coord-other-wrapper, .license-other-wrapper"
           )
-          .forEach((wrap) => {
-            wrap.classList.add("hidden");
-          });
-
+          .forEach((wrap) => wrap.classList.add("hidden"));
+    
         clone
           .querySelectorAll(
             ".source-other-input, .resolution-other-input, .vertical-datum-other-input, .coord-other-input, .license-other-input"
@@ -1650,15 +1600,11 @@
             inp.disabled = true;
             inp.value = "";
           });
-
-        // ซ่อน block ลุ่มน้ำ/จังหวัด
+    
         clone
           .querySelectorAll(".basin-block, .province-block")
-          .forEach((b) => {
-            b.classList.add("hidden");
-          });
-
-        // ซ่อน local-block
+          .forEach((b) => b.classList.add("hidden"));
+    
         const cloneLocalBlock = clone.querySelector(".local-block");
         const cloneLocalInput = clone.querySelector(".local-input");
         const cloneLocalToggle = clone.querySelector(".toggle-local");
@@ -1668,30 +1614,23 @@
           cloneLocalInput.value = "";
           cloneLocalToggle.checked = false;
         }
-
-        // ล้าง tags
+    
         clone
           .querySelectorAll(".basin-tags, .province-tags")
-          .forEach((c) => {
-            c.innerHTML = "";
-          });
-
-        // ล้าง hidden field ของลุ่มน้ำ/จังหวัด
+          .forEach((c) => (c.innerHTML = ""));
         clone
           .querySelectorAll(".basin-other-input, .province-other-input")
-          .forEach((inp) => {
-            inp.value = "";
-          });
-
+          .forEach((inp) => (inp.value = ""));
+    
         demContainer.appendChild(clone);
         attachOtherFieldHandlers(clone);
         populateYearSelects();
         updateDemIndexes();
         applyReferenceDataToAllItems();
       });
-
+    
+      // reset form
       const resetBtn = document.getElementById("btnResetForm");
-
       resetBtn.addEventListener("click", (e) => {
         e.preventDefault();
         openConfirmModal(
@@ -1699,8 +1638,6 @@
           "คุณต้องการล้างค่าทั้งหมดในแบบฟอร์มหรือไม่?",
           () => {
             form.reset();
-
-            // เคลียร์ block coverage / tag / local input / search filter
             const items = demContainer.querySelectorAll(".dem-item");
             items.forEach((item, idx) => {
               if (idx > 0) {
@@ -1712,8 +1649,7 @@
               const basinTags = item.querySelector(".basin-tags");
               const provinceTags = item.querySelector(".province-tags");
               const basinHidden = item.querySelector(".basin-other-input");
-              const provinceHidden =
-                item.querySelector(".province-other-input");
+              const provinceHidden = item.querySelector(".province-other-input");
               const localInput = item.querySelector(".local-input");
               const localToggle = item.querySelector(".toggle-local");
               const localBlock = item.querySelector(".local-block");
@@ -1721,84 +1657,73 @@
               const provinceSearch = item.querySelector(".province-search");
               const basinSelect = item.querySelector(".basin-select");
               const provinceSelect = item.querySelector(".province-select");
-
+    
               if (basinBlock) basinBlock.classList.add("hidden");
               if (provinceBlock) provinceBlock.classList.add("hidden");
               if (basinTags) basinTags.innerHTML = "";
               if (provinceTags) provinceTags.innerHTML = "";
               if (basinHidden) basinHidden.value = "";
               if (provinceHidden) provinceHidden.value = "";
-
+    
               if (localBlock) localBlock.classList.add("hidden");
               if (localInput) {
                 localInput.value = "";
                 localInput.disabled = true;
               }
               if (localToggle) localToggle.checked = false;
-
+    
               if (basinSearch) basinSearch.value = "";
               if (provinceSearch) provinceSearch.value = "";
               if (basinSelect) {
-                Array.from(basinSelect.options).forEach((opt) => {
-                  opt.hidden = false;
-                });
+                Array.from(basinSelect.options).forEach((opt) => (opt.hidden = false));
               }
               if (provinceSelect) {
-                Array.from(provinceSelect.options).forEach((opt) => {
-                  opt.hidden = false;
-                });
+                Array.from(provinceSelect.options).forEach((opt) => (opt.hidden = false));
               }
             });
-
+    
             updateDemIndexes();
             applyReferenceDataToAllItems();
           }
         );
       });
-
-      // helper: ดึงค่าจาก checkbox ภายใน container
+    
       function getCheckedValues(container, selector) {
         return Array.from(container.querySelectorAll(selector + ":checked")).map(
           (el) => el.value
         );
       }
-
-      // ดึงข้อมูลจาก form เพื่อส่งไป Apps Script
+    
       function collectFormData() {
         const agency = {
           agencyName: document.getElementById("agencyName").value.trim(),
           subUnit: document.getElementById("subUnit").value.trim(),
           contactName: document.getElementById("contactName").value.trim(),
-          contactPosition:
-            document.getElementById("contactPosition").value.trim(),
+          contactPosition: document.getElementById("contactPosition").value.trim(),
           contactPhone: document.getElementById("contactPhone").value.trim(),
           contactEmail: document.getElementById("contactEmail").value.trim(),
         };
-
+    
         const items = [];
         const demItems = demContainer.querySelectorAll(".dem-item");
         demItems.forEach((item) => {
           const itemData = {};
-
+    
           itemData.demName =
             item.querySelector('input[name="demName[]"]')?.value.trim() || "";
           itemData.sourceType =
             item.querySelector('select[name="sourceType[]"]')?.value || "";
           itemData.sourceOther =
-            item.querySelector('input[name="sourceOther[]"]')?.value.trim() ||
-            "";
+            item.querySelector('input[name="sourceOther[]"]')?.value.trim() || "";
           itemData.year =
             item.querySelector('select[name="year[]"]')?.value || "";
-
-          // coverage
+    
           itemData.coverageCountry = getCheckedValues(
             item,
             'input[name="coverageCountry[]"]'
           );
-
-          const basinSelect = item.querySelector(
-            'select[name="coverageBasin[]"]'
-          );
+    
+          const basinSelect = item.querySelector('select[name="coverageBasin[]"]');
           itemData.coverageBasinSelect = basinSelect
             ? Array.from(basinSelect.options)
                 .filter((o) => o.selected)
@@ -1806,7 +1731,7 @@
             : [];
           itemData.coverageBasinTags =
             item.querySelector(".basin-other-input")?.value.trim() || "";
-
+    
           const provinceSelect = item.querySelector(
             'select[name="coverageProvince[]"]'
           );
@@ -1817,144 +1742,117 @@
             : [];
           itemData.coverageProvinceTags =
             item.querySelector(".province-other-input")?.value.trim() || "";
-
+    
           itemData.coverageLocal =
-            item.querySelector('input[name="coverageLocal[]"]')?.value.trim() ||
-            "";
-
-          // technical
+            item.querySelector('input[name="coverageLocal[]"]')?.value.trim() || "";
+    
           itemData.resolution =
             item.querySelector('select[name="resolution[]"]')?.value || "";
           itemData.resolutionOther =
             item.querySelector('input[name="resolutionOther[]"]')?.value.trim() ||
             "";
           itemData.verticalAccuracy =
-            item.querySelector('input[name="verticalAccuracy[]"]')?.value ||
-            "";
+            item.querySelector('input[name="verticalAccuracy[]"]')?.value || "";
           itemData.horizontalAccuracy =
-            item.querySelector('input[name="horizontalAccuracy[]"]')?.value ||
-            "";
+            item.querySelector('input[name="horizontalAccuracy[]"]')?.value || "";
           itemData.verticalDatum =
             item.querySelector('select[name="verticalDatum[]"]')?.value || "";
           itemData.verticalDatumOther =
-            item.querySelector('input[name="verticalDatumOther[]"]')?.value.trim() ||
-            "";
+            item.querySelector(
+              'input[name="verticalDatumOther[]"]'
+            )?.value.trim() || "";
           itemData.coordSys =
             item.querySelector('select[name="coordSys[]"]')?.value || "";
           itemData.coordSysOther =
-            item.querySelector('input[name="coordSysOther[]"]')?.value.trim() ||
-            "";
-
-          // DEM Methods / File Formats / Access / QC / Uses
-          itemData.demMethods = getCheckedValues(
-            item,
-            'input[name^="demMethod"]'
-          );
+            item.querySelector('input[name="coordSysOther[]"]')?.value.trim() || "";
+    
+          itemData.demMethods = getCheckedValues(item, 'input[name^="demMethod"]');
           const demMethodOtherText =
             item.querySelector('input[name="demMethodOther[]"]')?.value.trim() ||
             "";
-          if (demMethodOtherText) {
-            itemData.demMethods.push(demMethodOtherText);
-          }
-
-          itemData.fileFormats = getCheckedValues(
-            item,
-            'input[name^="format"]'
-          );
+          if (demMethodOtherText) itemData.demMethods.push(demMethodOtherText);
+    
+          itemData.fileFormats = getCheckedValues(item, 'input[name^="format"]');
           const formatOtherText =
-            item.querySelector('input[name="formatOther[]"]')?.value.trim() ||
-            "";
-          if (formatOtherText) {
-            itemData.fileFormats.push(formatOtherText);
-          }
-
+            item.querySelector('input[name="formatOther[]"]')?.value.trim() || "";
+          if (formatOtherText) itemData.fileFormats.push(formatOtherText);
+    
           itemData.fileSize =
             item.querySelector('input[name="fileSize[]"]')?.value || "";
           itemData.fileSizeUnit =
             item.querySelector('select[name="fileSizeUnit[]"]')?.value || "";
-
+    
           itemData.license =
             item.querySelector('select[name="license[]"]')?.value || "";
           itemData.licenseOther =
-            item.querySelector('input[name="licenseOther[]"]')?.value.trim() ||
-            "";
-
-          itemData.accessChannels = getCheckedValues(
-            item,
-            'input[name^="access"]'
-          );
+            item.querySelector('input[name="licenseOther[]"]')?.value.trim() || "";
+    
+          itemData.accessChannels = getCheckedValues(item, 'input[name^="access"]');
           itemData.accessOther =
-            item.querySelector('input[name="accessOther[]"]')?.value.trim() ||
-            "";
-
+            item.querySelector('input[name="accessOther[]"]')?.value.trim() || "";
+    
           itemData.qcQa = getCheckedValues(item, 'input[name^="qc"]');
           itemData.qcQaOther =
             item.querySelector('input[name="qcOther[]"]')?.value.trim() || "";
-
+    
           itemData.mainUses = getCheckedValues(item, 'input[name^="use"]');
           itemData.mainUsesOther =
             item.querySelector('input[name="useOther[]"]')?.value.trim() || "";
-
+    
           itemData.remark =
-            item.querySelector('textarea[name="remark[]"]')?.value.trim() ||
-            "";
-
+            item.querySelector('textarea[name="remark[]"]')?.value.trim() || "";
+    
           items.push(itemData);
         });
-
-        return {
-          agency,
-          items,
-        };
+    
+        return { agency, items };
       }
-
+    
+      async function submitToAppsScript(payload) {
+        // ใช้ Content-Type: text/plain เพื่อเลี่ยง CORS preflight :contentReference[oaicite:0]{index=0}
+        const resp = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+          },
+          body: JSON.stringify(payload),
+        });
+    
+        let data = null;
+        try {
+          data = await resp.json();
+        } catch (_) {
+          data = null;
+        }
+        return data || { success: resp.ok };
+      }
+    
       form.addEventListener("submit", (e) => {
         e.preventDefault();
         openConfirmModal(
           "ยืนยันการส่งแบบฟอร์ม",
           "โปรดตรวจสอบข้อมูลให้ถูกต้อง ก่อนยืนยันการส่งแบบฟอร์ม",
-          () => {
+          async () => {
             const payload = collectFormData();
-
-            if (
-              typeof google === "undefined" ||
-              !google.script ||
-              !google.script.run
-            ) {
-              alert(
-                "ยังไม่ได้รันใน Google Apps Script Web App\nดูข้อมูลที่ console แทน"
-              );
-              console.log("payload", payload);
-              return;
+            try {
+              const res = await submitToAppsScript(payload);
+              alert("บันทึกข้อมูลเรียบร้อยแล้ว");
+    
+              // reset เหลือ DEM 1 แถวเหมือนตอนเริ่ม
+              form.reset();
+              const items = demContainer.querySelectorAll(".dem-item");
+              items.forEach((item, idx) => {
+                if (idx > 0) item.remove();
+              });
+              const first = demContainer.querySelector(".dem-item");
+              if (first) attachOtherFieldHandlers(first);
+              populateYearSelects();
+              updateDemIndexes();
+              applyReferenceDataToAllItems();
+            } catch (err) {
+              console.error("submitDemSurvey error", err);
+              alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล โปรดลองอีกครั้ง");
             }
-
-            google.script.run
-              .withSuccessHandler((res) => {
-                alert("บันทึกข้อมูลเรียบร้อยแล้ว");
-                // reset ฟอร์มเหลือเพียง DEM item แรก
-                form.reset();
-                const items = demContainer.querySelectorAll(".dem-item");
-                items.forEach((item, idx) => {
-                  if (idx > 0) {
-                    item.remove();
-                  }
-                });
-                const first = demContainer.querySelector(".dem-item");
-                if (first) {
-                  attachOtherFieldHandlers(first);
-                }
-                populateYearSelects();
-                updateDemIndexes();
-                applyReferenceDataToAllItems();
-              })
-              .withFailureHandler((err) => {
-                console.error("submitDemSurvey error", err);
-                alert(
-                  "เกิดข้อผิดพลาดในการบันทึกข้อมูล: " +
-                    (err && err.message ? err.message : err)
-                );
-              })
-              .submitDemSurvey(payload);
           }
         );
       });
