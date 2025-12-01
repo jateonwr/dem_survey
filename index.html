@@ -27,56 +27,71 @@
         min-height: 3.5rem;
       }
 
-      /* toggle-pill */
+/* toggle-pill (ปรับขนาดให้เล็กลง) */
       .toggle-pill {
         position: relative;
         display: inline-flex;
         align-items: center;
-        min-width: 72px;
-        height: 26px;
+        justify-content: center;
+        min-width: 54px; /* ลดความกว้าง */
+        height: 22px;    /* ลดความสูง */
         border-radius: 9999px;
         cursor: pointer;
         border: none;
         outline: none;
         transition: background-color 0.25s ease;
-        padding: 0 6px;
+        padding: 0;      /* เอา padding เดิมออกเพื่อจัดระยะด้วย margin */
         background-color: #94a3b8;
       }
 
+      /* toggle-knob (วงกลมเล็กลง) */
       .toggle-pill .toggle-knob {
-        width: 20px;
-        height: 20px;
+        width: 16px;     /* ลดขนาดวงกลม */
+        height: 16px;    /* ลดขนาดวงกลม */
         border-radius: 50%;
         background: #ffffff;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         position: absolute;
-        top: 3px;
-        left: 4px;
+        top: 3px;        /* จัดกึ่งกลางแนวตั้ง (22-16)/2 = 3 */
         transition: left 0.25s ease, right 0.25s ease;
       }
 
+      /* toggle-label (ข้อความ) */
+      .toggle-label {
+        display: inline-block;
+        color: #ffffff;
+        font-size: 10px; /* ลดขนาดฟอนต์เล็กน้อย */
+        font-weight: 600;
+        pointer-events: none;
+        transition: margin 0.25s ease; /* เพิ่ม transition ให้ข้อความขยับนุ่มนวล */
+      }
+
+      /* --- สถานะ: SHOWN (สีเขียว / เปิด) --- */
+      /* ปุ่มอยู่ขวา -> ข้อความต้องอยู่ซ้าย */
       .toggle-pill[data-state="shown"] {
         background-color: #22c55e;
       }
       .toggle-pill[data-state="shown"] .toggle-knob {
         left: auto;
-        right: 4px;
+        right: 3px; /* ชิดขวา */
+      }
+      .toggle-pill[data-state="shown"] .toggle-label {
+        margin-right: 14px; /* ดันข้อความไปทางซ้าย หนีจากปุ่ม */
+        margin-left: 0;
       }
 
+      /* --- สถานะ: HIDDEN (สีเทา / ปิด) --- */
+      /* ปุ่มอยู่ซ้าย -> ข้อความต้องอยู่ขวา */
       .toggle-pill[data-state="hidden"] {
         background-color: #94a3b8;
       }
       .toggle-pill[data-state="hidden"] .toggle-knob {
-        left: 4px;
+        left: 3px;  /* ชิดซ้าย */
         right: auto;
       }
-
-      .toggle-label {
-        display: inline-block;
-        color: #ffffff;
-        font-size: 11px;
-        margin-left: 8px;
-        pointer-events: none;
+      .toggle-pill[data-state="hidden"] .toggle-label {
+        margin-left: 14px; /* ดันข้อความไปทางขวา หนีจากปุ่ม */
+        margin-right: 0;
       }
 
       /* Tag แบบ C (pill) สำหรับลุ่มน้ำ / จังหวัด */
@@ -1176,21 +1191,19 @@
 
     <script>
       // ★★ ใส่ URL Web App ของ Apps Script ที่นี่ ★★
-      const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8Wf9vZsQbksaG7dmtWxw2b26xzCxI0Rl1lTlWggIS_rlULBL-wkOjDgRBZuH_vWI5Lw/exec";
+      const APPS_SCRIPT_URL = "https://script.google.com/macros/s/XXXXXXXXXXXX/exec";
     
       const demContainer = document.getElementById("demItemsContainer");
       const btnAddDemItem = document.getElementById("btnAddDemItem");
       const form = document.getElementById("demSurveyForm");
     
+      // -------------------- Confirm Modal --------------------
       const confirmModal = document.getElementById("confirmModal");
       const confirmTitle = document.getElementById("confirmTitle");
       const confirmMessage = document.getElementById("confirmMessage");
       const confirmCancel = document.getElementById("confirmCancel");
       const confirmOk = document.getElementById("confirmOk");
       let confirmCallback = null;
-    
-      // เก็บข้อมูล reference จากชีท
-      let REF_DATA = null;
     
       function openConfirmModal(title, message, onConfirm) {
         confirmTitle.textContent = title;
@@ -1218,19 +1231,50 @@
           closeConfirmModal();
         }
       });
+    
+      // -------------------- Success Modal --------------------
+      const successModal = document.getElementById("successModal");
+      const successOk = document.getElementById("successOk");
+    
+      function openSuccessModal() {
+        if (!successModal) return;
+        successModal.classList.remove("hidden");
+        successModal.classList.add("flex");
+      }
+    
+      function closeSuccessModal() {
+        if (!successModal) return;
+        successModal.classList.add("hidden");
+        successModal.classList.remove("flex");
+      }
+    
+      if (successOk) {
+        successOk.addEventListener("click", closeSuccessModal);
+      }
+      if (successModal) {
+        successModal.addEventListener("click", (e) => {
+          if (e.target === successModal) {
+            closeSuccessModal();
+          }
+        });
+      }
+    
+      // ปิด modal ด้วย ESC (ทั้ง confirm + success)
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
           closeConfirmModal();
+          closeSuccessModal();
         }
       });
     
-      // เติมปี พ.ศ. 2539–2568
+      // -------------------- Year Select (2539–2568) --------------------
       function populateYearSelects() {
         const selects = document.querySelectorAll(".year-select");
         const startBE = 2539;
         const endBE = 2568;
     
         selects.forEach((sel) => {
+          // ถ้ามี option > 1 (มีข้อมูลแล้ว) ไม่ต้องเติมซ้ำ
           if (sel.options.length > 1) return;
           for (let y = endBE; y >= startBE; y--) {
             const opt = document.createElement("option");
@@ -1241,11 +1285,17 @@
         });
       }
     
+      // -------------------- DEM Index (#ข้อมูลชุดที่ X) --------------------
       function updateDemIndexes() {
         const items = demContainer.querySelectorAll(".dem-item");
         items.forEach((item, index) => {
-          item.querySelector(".dem-index").textContent = "#" + (index + 1);
+          const idx = index + 1;
+          const titleIndexSpan = item.querySelector(".dem-title-index");
+          if (titleIndexSpan) {
+            titleIndexSpan.textContent = idx.toString();
+          }
           const removeBtn = item.querySelector(".btn-remove-dem-item");
+          if (!removeBtn) return;
           if (items.length === 1) {
             removeBtn.classList.add("hidden");
           } else {
@@ -1254,6 +1304,7 @@
         });
       }
     
+      // -------------------- แสดง/ซ่อน Section Card ในแต่ละ DEM --------------------
       function setSectionVisibility(card, visible) {
         const body = card.querySelector(".section-body");
         const toggleBtn = card.querySelector(".section-toggle");
@@ -1324,7 +1375,8 @@
         }
       }
     
-      // ------ ส่วน reference dropdown จาก Apps Script (GET) ------
+      // -------------------- Reference data (จังหวัด / ลุ่มน้ำ) --------------------
+      let REF_DATA = null;
     
       function populateSelectOptions(selectEl, values) {
         if (!selectEl) return;
@@ -1365,12 +1417,13 @@
         }
       }
     
-      // ------ handler field ต่าง ๆ ในแต่ละ DEM item ------
-    
+      // -------------------- Attach handlers ให้ DEM item 1 ใบ --------------------
       function attachOtherFieldHandlers(item) {
+        if (!item) return;
+    
         attachSectionToggles(item);
     
-        // helper Tag Stack (ลุ่มน้ำ / จังหวัด)
+        // ---- Tag Stack Helper ----
         function setupTagStack(selectEl, tagsContainer, hiddenInput) {
           if (!selectEl || !tagsContainer || !hiddenInput) return;
           let values = [];
@@ -1423,6 +1476,7 @@
           });
         }
     
+        // ---- Search Filter Helper ----
         function setupSearchFilter(selectEl, searchInput) {
           if (!selectEl || !searchInput) return;
           const allOptions = Array.from(selectEl.options);
@@ -1435,7 +1489,7 @@
           });
         }
     
-        // 2. แหล่งที่มา
+        // ---- Source (แหล่งที่มา) ----
         const sourceSelect = item.querySelector(".source-select");
         const sourceOtherWrapper = item.querySelector(".source-other-wrapper");
         const sourceOtherInput = item.querySelector(".source-other-input");
@@ -1449,7 +1503,7 @@
           });
         }
     
-        // 5. Resolution
+        // ---- Resolution ----
         const resSelect = item.querySelector(".resolution-select");
         const resOtherWrapper = item.querySelector(".resolution-other-wrapper");
         const resOtherInput = item.querySelector(".resolution-other-input");
@@ -1464,7 +1518,7 @@
           });
         }
     
-        // 8. Vertical Datum
+        // ---- Vertical Datum ----
         const vDatumSelect = item.querySelector(".vertical-datum-select");
         const vDatumWrapper = item.querySelector(".vertical-datum-other-wrapper");
         const vDatumInput = item.querySelector(".vertical-datum-other-input");
@@ -1478,7 +1532,7 @@
           });
         }
     
-        // 9. Coordinate System
+        // ---- Coordinate System ----
         const coordSelect = item.querySelector(".coord-select");
         const coordWrapper = item.querySelector(".coord-other-wrapper");
         const coordInput = item.querySelector(".coord-other-input");
@@ -1492,7 +1546,7 @@
           });
         }
     
-        // 13. License
+        // ---- License ----
         const licSelect = item.querySelector(".license-select");
         const licWrapper = item.querySelector(".license-other-wrapper");
         const licInput = item.querySelector(".license-other-input");
@@ -1506,36 +1560,59 @@
           });
         }
     
-        // toggle ลุ่มน้ำ / จังหวัด / local
+        // ---- พื้นที่ครอบคลุม (เลือกทีละแบบ) ----
+        const coverageCountryCb = item.querySelector('input[name="coverageCountry[]"]');
         const basinToggle = item.querySelector(".toggle-basin");
-        const basinBlock = item.querySelector(".basin-block");
-        if (basinToggle && basinBlock) {
-          basinToggle.addEventListener("change", () => {
-            basinBlock.classList.toggle("hidden", !basinToggle.checked);
-          });
-        }
-    
         const provinceToggle = item.querySelector(".toggle-province");
-        const provinceBlock = item.querySelector(".province-block");
-        if (provinceToggle && provinceBlock) {
-          provinceToggle.addEventListener("change", () => {
-            provinceBlock.classList.toggle("hidden", !provinceToggle.checked);
-          });
-        }
-    
         const localToggle = item.querySelector(".toggle-local");
-        const localInput = item.querySelector(".local-input");
+    
+        const basinBlock = item.querySelector(".basin-block");
+        const provinceBlock = item.querySelector(".province-block");
         const localBlock = item.querySelector(".local-block");
-        if (localToggle && localInput && localBlock) {
-          localToggle.addEventListener("change", () => {
+        const localInput = item.querySelector(".local-input");
+    
+        function updateCoverageGroup() {
+          const cbs = [coverageCountryCb, basinToggle, provinceToggle, localToggle];
+          const selected = cbs.find((cb) => cb && cb.checked);
+    
+          cbs.forEach((cb) => {
+            if (!cb) return;
+            if (selected && cb !== selected) {
+              cb.checked = false;
+              cb.disabled = true;
+            } else {
+              cb.disabled = false;
+            }
+          });
+    
+          if (basinBlock && basinToggle) {
+            basinBlock.classList.toggle("hidden", !basinToggle.checked);
+          }
+          if (provinceBlock && provinceToggle) {
+            provinceBlock.classList.toggle("hidden", !provinceToggle.checked);
+          }
+          if (localBlock && localInput && localToggle) {
             const show = localToggle.checked;
             localBlock.classList.toggle("hidden", !show);
             localInput.disabled = !show;
             if (!show) localInput.value = "";
-          });
+          }
         }
     
-        // Tag Stack
+        if (coverageCountryCb) {
+          coverageCountryCb.addEventListener("change", updateCoverageGroup);
+        }
+        if (basinToggle) {
+          basinToggle.addEventListener("change", updateCoverageGroup);
+        }
+        if (provinceToggle) {
+          provinceToggle.addEventListener("change", updateCoverageGroup);
+        }
+        if (localToggle) {
+          localToggle.addEventListener("change", updateCoverageGroup);
+        }
+    
+        // ---- Tag Stack ลุ่มน้ำ / จังหวัด ----
         const basinSelect = item.querySelector(".basin-select");
         const basinTags = item.querySelector(".basin-tags");
         const basinHidden = item.querySelector(".basin-other-input");
@@ -1546,13 +1623,13 @@
         const provinceHidden = item.querySelector(".province-other-input");
         setupTagStack(provinceSelect, provinceTags, provinceHidden);
     
-        // Search filter
+        // ---- Search filter ----
         const basinSearch = item.querySelector(".basin-search");
         setupSearchFilter(basinSelect, basinSearch);
         const provinceSearch = item.querySelector(".province-search");
         setupSearchFilter(provinceSelect, provinceSearch);
     
-        // ปุ่มลบ DEM
+        // ---- ปุ่มลบ DEM ----
         const removeBtn = item.querySelector(".btn-remove-dem-item");
         if (removeBtn) {
           removeBtn.addEventListener("click", () => {
@@ -1560,24 +1637,30 @@
             updateDemIndexes();
           });
         }
+    
+        // เรียกครั้งแรกเพื่อจัด state เริ่มต้น
+        updateCoverageGroup();
       }
     
+      // -------------------- Init item แรก --------------------
       const firstItem = demContainer.querySelector(".dem-item");
       attachOtherFieldHandlers(firstItem);
       populateYearSelects();
       updateDemIndexes();
       initReferenceDropdowns();
     
-      // เพิ่ม DEM item ใหม่
+      // -------------------- เพิ่ม DEM item --------------------
       btnAddDemItem.addEventListener("click", () => {
         const first = demContainer.querySelector(".dem-item");
         const clone = first.cloneNode(true);
     
+        // ล้างค่าทั้งหมดใน clone
         clone.querySelectorAll("input, textarea, select").forEach((el) => {
           if (el.tagName === "SELECT") {
             el.selectedIndex = 0;
           } else if (el.type === "checkbox" || el.type === "radio") {
             el.checked = false;
+            el.disabled = false;
           } else {
             el.value = "";
           }
@@ -1586,6 +1669,7 @@
           }
         });
     
+        // ซ่อน/ปิด other fields
         clone
           .querySelectorAll(
             ".source-other-wrapper, .resolution-other-wrapper, .vertical-datum-other-wrapper, .coord-other-wrapper, .license-other-wrapper"
@@ -1601,6 +1685,7 @@
             inp.value = "";
           });
     
+        // ซ่อน block coverage
         clone
           .querySelectorAll(".basin-block, .province-block")
           .forEach((b) => b.classList.add("hidden"));
@@ -1615,12 +1700,27 @@
           cloneLocalToggle.checked = false;
         }
     
+        // ล้าง Tag Stack
         clone
           .querySelectorAll(".basin-tags, .province-tags")
           .forEach((c) => (c.innerHTML = ""));
         clone
           .querySelectorAll(".basin-other-input, .province-other-input")
           .forEach((inp) => (inp.value = ""));
+    
+        // ล้าง search box + unhide ทุก option
+        const basinSearch = clone.querySelector(".basin-search");
+        const basinSelect = clone.querySelector(".basin-select");
+        if (basinSearch) basinSearch.value = "";
+        if (basinSelect) {
+          Array.from(basinSelect.options).forEach((opt) => (opt.hidden = false));
+        }
+        const provinceSearch = clone.querySelector(".province-search");
+        const provinceSelect = clone.querySelector(".province-select");
+        if (provinceSearch) provinceSearch.value = "";
+        if (provinceSelect) {
+          Array.from(provinceSelect.options).forEach((opt) => (opt.hidden = false));
+        }
     
         demContainer.appendChild(clone);
         attachOtherFieldHandlers(clone);
@@ -1629,7 +1729,7 @@
         applyReferenceDataToAllItems();
       });
     
-      // reset form
+      // -------------------- Reset Form --------------------
       const resetBtn = document.getElementById("btnResetForm");
       resetBtn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -1638,56 +1738,64 @@
           "คุณต้องการล้างค่าทั้งหมดในแบบฟอร์มหรือไม่?",
           () => {
             form.reset();
+    
+            // ลบ DEM item ทั้งหมด ยกเว้นตัวแรก
             const items = demContainer.querySelectorAll(".dem-item");
             items.forEach((item, idx) => {
               if (idx > 0) {
                 item.remove();
-                return;
-              }
-              const basinBlock = item.querySelector(".basin-block");
-              const provinceBlock = item.querySelector(".province-block");
-              const basinTags = item.querySelector(".basin-tags");
-              const provinceTags = item.querySelector(".province-tags");
-              const basinHidden = item.querySelector(".basin-other-input");
-              const provinceHidden = item.querySelector(".province-other-input");
-              const localInput = item.querySelector(".local-input");
-              const localToggle = item.querySelector(".toggle-local");
-              const localBlock = item.querySelector(".local-block");
-              const basinSearch = item.querySelector(".basin-search");
-              const provinceSearch = item.querySelector(".province-search");
-              const basinSelect = item.querySelector(".basin-select");
-              const provinceSelect = item.querySelector(".province-select");
-    
-              if (basinBlock) basinBlock.classList.add("hidden");
-              if (provinceBlock) provinceBlock.classList.add("hidden");
-              if (basinTags) basinTags.innerHTML = "";
-              if (provinceTags) provinceTags.innerHTML = "";
-              if (basinHidden) basinHidden.value = "";
-              if (provinceHidden) provinceHidden.value = "";
-    
-              if (localBlock) localBlock.classList.add("hidden");
-              if (localInput) {
-                localInput.value = "";
-                localInput.disabled = true;
-              }
-              if (localToggle) localToggle.checked = false;
-    
-              if (basinSearch) basinSearch.value = "";
-              if (provinceSearch) provinceSearch.value = "";
-              if (basinSelect) {
-                Array.from(basinSelect.options).forEach((opt) => (opt.hidden = false));
-              }
-              if (provinceSelect) {
-                Array.from(provinceSelect.options).forEach((opt) => (opt.hidden = false));
               }
             });
     
+            const first = demContainer.querySelector(".dem-item");
+            if (!first) return;
+    
+            // ล้างสถานะเพิ่มเติมใน item แรก
+            const basinBlock = first.querySelector(".basin-block");
+            const provinceBlock = first.querySelector(".province-block");
+            const basinTags = first.querySelector(".basin-tags");
+            const provinceTags = first.querySelector(".province-tags");
+            const basinHidden = first.querySelector(".basin-other-input");
+            const provinceHidden = first.querySelector(".province-other-input");
+            const localInput = first.querySelector(".local-input");
+            const localToggle = first.querySelector(".toggle-local");
+            const localBlock = first.querySelector(".local-block");
+            const basinSearch = first.querySelector(".basin-search");
+            const basinSelect = first.querySelector(".basin-select");
+            const provinceSearch = first.querySelector(".province-search");
+            const provinceSelect = first.querySelector(".province-select");
+    
+            if (basinBlock) basinBlock.classList.add("hidden");
+            if (provinceBlock) provinceBlock.classList.add("hidden");
+            if (basinTags) basinTags.innerHTML = "";
+            if (provinceTags) provinceTags.innerHTML = "";
+            if (basinHidden) basinHidden.value = "";
+            if (provinceHidden) provinceHidden.value = "";
+    
+            if (localBlock) localBlock.classList.add("hidden");
+            if (localInput) {
+              localInput.value = "";
+              localInput.disabled = true;
+            }
+            if (localToggle) localToggle.checked = false;
+    
+            if (basinSearch) basinSearch.value = "";
+            if (basinSelect) {
+              Array.from(basinSelect.options).forEach((opt) => (opt.hidden = false));
+            }
+            if (provinceSearch) provinceSearch.value = "";
+            if (provinceSelect) {
+              Array.from(provinceSelect.options).forEach((opt) => (opt.hidden = false));
+            }
+    
+            populateYearSelects();
             updateDemIndexes();
             applyReferenceDataToAllItems();
           }
         );
       });
     
+      // -------------------- Collect & Submit --------------------
       function getCheckedValues(container, selector) {
         return Array.from(container.querySelectorAll(selector + ":checked")).map(
           (el) => el.value
@@ -1699,7 +1807,9 @@
           agencyName: document.getElementById("agencyName").value.trim(),
           subUnit: document.getElementById("subUnit").value.trim(),
           contactName: document.getElementById("contactName").value.trim(),
-          contactPosition: document.getElementById("contactPosition").value.trim(),
+          contactPosition: document
+            .getElementById("contactPosition")
+            .value.trim(),
           contactPhone: document.getElementById("contactPhone").value.trim(),
           contactEmail: document.getElementById("contactEmail").value.trim(),
         };
@@ -1709,6 +1819,7 @@
         demItems.forEach((item) => {
           const itemData = {};
     
+          // A. ข้อมูลทั่วไป
           itemData.demName =
             item.querySelector('input[name="demName[]"]')?.value.trim() || "";
           itemData.sourceType =
@@ -1718,34 +1829,20 @@
           itemData.year =
             item.querySelector('select[name="year[]"]')?.value || "";
     
+          // พื้นที่ครอบคลุม
           itemData.coverageCountry = getCheckedValues(
             item,
             'input[name="coverageCountry[]"]'
           );
-    
-          const basinSelect = item.querySelector('select[name="coverageBasin[]"]');
-          itemData.coverageBasinSelect = basinSelect
-            ? Array.from(basinSelect.options)
-                .filter((o) => o.selected)
-                .map((o) => o.value)
-            : [];
           itemData.coverageBasinTags =
             item.querySelector(".basin-other-input")?.value.trim() || "";
-    
-          const provinceSelect = item.querySelector(
-            'select[name="coverageProvince[]"]'
-          );
-          itemData.coverageProvinceSelect = provinceSelect
-            ? Array.from(provinceSelect.options)
-                .filter((o) => o.selected)
-                .map((o) => o.value)
-            : [];
           itemData.coverageProvinceTags =
             item.querySelector(".province-other-input")?.value.trim() || "";
-    
           itemData.coverageLocal =
-            item.querySelector('input[name="coverageLocal[]"]')?.value.trim() || "";
+            item.querySelector('input[name="coverageLocal[]"]')?.value.trim() ||
+            "";
     
+          // B. คุณภาพเชิงพื้นที่
           itemData.resolution =
             item.querySelector('select[name="resolution[]"]')?.value || "";
           itemData.resolutionOther =
@@ -1754,7 +1851,8 @@
           itemData.verticalAccuracy =
             item.querySelector('input[name="verticalAccuracy[]"]')?.value || "";
           itemData.horizontalAccuracy =
-            item.querySelector('input[name="horizontalAccuracy[]"]')?.value || "";
+            item.querySelector('input[name="horizontalAccuracy[]"]')?.value ||
+            "";
           itemData.verticalDatum =
             item.querySelector('select[name="verticalDatum[]"]')?.value || "";
           itemData.verticalDatumOther =
@@ -1764,14 +1862,17 @@
           itemData.coordSys =
             item.querySelector('select[name="coordSys[]"]')?.value || "";
           itemData.coordSysOther =
-            item.querySelector('input[name="coordSysOther[]"]')?.value.trim() || "";
+            item.querySelector('input[name="coordSysOther[]"]')?.value.trim() ||
+            "";
     
+          // วิธีการจัดทำ DEM
           itemData.demMethods = getCheckedValues(item, 'input[name^="demMethod"]');
           const demMethodOtherText =
             item.querySelector('input[name="demMethodOther[]"]')?.value.trim() ||
             "";
           if (demMethodOtherText) itemData.demMethods.push(demMethodOtherText);
     
+          // รูปแบบไฟล์
           itemData.fileFormats = getCheckedValues(item, 'input[name^="format"]');
           const formatOtherText =
             item.querySelector('input[name="formatOther[]"]')?.value.trim() || "";
@@ -1782,23 +1883,32 @@
           itemData.fileSizeUnit =
             item.querySelector('select[name="fileSizeUnit[]"]')?.value || "";
     
+          // ลิขสิทธิ์
           itemData.license =
             item.querySelector('select[name="license[]"]')?.value || "";
           itemData.licenseOther =
-            item.querySelector('input[name="licenseOther[]"]')?.value.trim() || "";
+            item.querySelector('input[name="licenseOther[]"]')?.value.trim() ||
+            "";
     
-          itemData.accessChannels = getCheckedValues(item, 'input[name^="access"]');
+          // ช่องทางการเข้าถึง
+          itemData.accessChannels = getCheckedValues(
+            item,
+            'input[name^="access"]'
+          );
           itemData.accessOther =
             item.querySelector('input[name="accessOther[]"]')?.value.trim() || "";
     
+          // QC/QA
           itemData.qcQa = getCheckedValues(item, 'input[name^="qc"]');
           itemData.qcQaOther =
             item.querySelector('input[name="qcOther[]"]')?.value.trim() || "";
     
+          // การใช้งาน
           itemData.mainUses = getCheckedValues(item, 'input[name^="use"]');
           itemData.mainUsesOther =
             item.querySelector('input[name="useOther[]"]')?.value.trim() || "";
     
+          // หมายเหตุ
           itemData.remark =
             item.querySelector('textarea[name="remark[]"]')?.value.trim() || "";
     
@@ -1809,7 +1919,6 @@
       }
     
       async function submitToAppsScript(payload) {
-        // ใช้ Content-Type: text/plain เพื่อเลี่ยง CORS preflight :contentReference[oaicite:0]{index=0}
         const resp = await fetch(APPS_SCRIPT_URL, {
           method: "POST",
           headers: {
@@ -1821,7 +1930,7 @@
         let data = null;
         try {
           data = await resp.json();
-        } catch (_) {
+        } catch (e) {
           data = null;
         }
         return data || { success: resp.ok };
@@ -1836,16 +1945,66 @@
             const payload = collectFormData();
             try {
               const res = await submitToAppsScript(payload);
-              alert("บันทึกข้อมูลเรียบร้อยแล้ว");
     
-              // reset เหลือ DEM 1 แถวเหมือนตอนเริ่ม
+              // ถ้าสำเร็จ แสดง popup ตรงกลาง
+              if (res && res.success) {
+                openSuccessModal();
+              } else {
+                alert("บันทึกข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+              }
+    
+              // reset form กลับไปเหลือ DEM 1 ชุด
               form.reset();
               const items = demContainer.querySelectorAll(".dem-item");
               items.forEach((item, idx) => {
                 if (idx > 0) item.remove();
               });
+    
               const first = demContainer.querySelector(".dem-item");
-              if (first) attachOtherFieldHandlers(first);
+              if (first) {
+                // เคลียร์สถานะเพิ่มเติมของ item แรก
+                const basinBlock = first.querySelector(".basin-block");
+                const provinceBlock = first.querySelector(".province-block");
+                const basinTags = first.querySelector(".basin-tags");
+                const provinceTags = first.querySelector(".province-tags");
+                const basinHidden = first.querySelector(".basin-other-input");
+                const provinceHidden = first.querySelector(".province-other-input");
+                const localInput = first.querySelector(".local-input");
+                const localToggle = first.querySelector(".toggle-local");
+                const localBlock = first.querySelector(".local-block");
+                const basinSearch = first.querySelector(".basin-search");
+                const basinSelect = first.querySelector(".basin-select");
+                const provinceSearch = first.querySelector(".province-search");
+                const provinceSelect = first.querySelector(".province-select");
+    
+                if (basinBlock) basinBlock.classList.add("hidden");
+                if (provinceBlock) provinceBlock.classList.add("hidden");
+                if (basinTags) basinTags.innerHTML = "";
+                if (provinceTags) provinceTags.innerHTML = "";
+                if (basinHidden) basinHidden.value = "";
+                if (provinceHidden) provinceHidden.value = "";
+    
+                if (localBlock) localBlock.classList.add("hidden");
+                if (localInput) {
+                  localInput.value = "";
+                  localInput.disabled = true;
+                }
+                if (localToggle) localToggle.checked = false;
+    
+                if (basinSearch) basinSearch.value = "";
+                if (basinSelect) {
+                  Array.from(basinSelect.options).forEach(
+                    (opt) => (opt.hidden = false)
+                  );
+                }
+                if (provinceSearch) provinceSearch.value = "";
+                if (provinceSelect) {
+                  Array.from(provinceSelect.options).forEach(
+                    (opt) => (opt.hidden = false)
+                  );
+                }
+              }
+    
               populateYearSelects();
               updateDemIndexes();
               applyReferenceDataToAllItems();
@@ -1857,5 +2016,6 @@
         );
       });
     </script>
+    
   </body>
 </html>
