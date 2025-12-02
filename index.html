@@ -129,10 +129,10 @@
             />
             <div>
               <h1 class="text-xl sm:text-2xl font-semibold text-slate-800">
-                แบบฟอร์มสำรวจข้อมูล DEM ของหน่วยงานรัฐในประเทศไทย
+                แบบฟอร์มสำรวจขข้อมูลความสูงภูมิประเทศเชิงเลขของหน่วยงานรัฐในประเทศไทย
               </h1>
               <p class="mt-1 text-sm text-slate-600">
-                Digital Elevation Model (DEM) Inventory Survey Form
+                ความสูงภูมิประเทศเชิงเลข (Digital Elevation Model, DEM)
               </p>
             </div>
           </div>
@@ -152,7 +152,7 @@
                 <label
                   for="agencyName"
                   class="block text-sm font-medium text-slate-700 mb-1"
-                  >1. ชื่อหน่วยงาน</label
+                  >ชื่อหน่วยงาน</label
                 >
                 <input
                   type="text"
@@ -167,7 +167,7 @@
                 <label
                   for="subUnit"
                   class="block text-sm font-medium text-slate-700 mb-1"
-                  >2. หน่วยงานย่อย / สำนัก / กอง</label
+                  >หน่วยงานย่อย / สำนัก / กอง</label
                 >
                 <input
                   type="text"
@@ -183,7 +183,7 @@
               class="border border-slate-300 rounded-lg p-3 bg-slate-50/30"
             >
               <legend class="px-2 text-sm font-semibold text-slate-700">
-                3. ผู้ประสานงาน
+                ผู้ประสานงาน
               </legend>
 
               <div class="grid gap-3 sm:grid-cols-2 mt-1">
@@ -191,7 +191,7 @@
                   <label
                     for="contactName"
                     class="block text-sm font-medium text-slate-700 mb-1"
-                    >ชื่อ–สกุล</label
+                    >(คำนำหน้า) ชื่อ – สกุล</label
                   >
                   <input
                     type="text"
@@ -221,7 +221,7 @@
                   <label
                     for="contactPhone"
                     class="block text-sm font-medium text-slate-700 mb-1"
-                    >โทรศัพท์</label
+                    >เบอร์โทรศัพท์</label
                   >
                   <input
                     type="tel"
@@ -263,9 +263,6 @@
                 >
                   ส่วนที่ 2 : รายการข้อมูล DEM ที่หน่วยงานมี
                 </h2>
-                <p class="text-xs text-slate-600 mt-1 pl-4">
-                  กรอกซ้ำได้หลายแถวตามจำนวนชุดข้อมูล DEM
-                </p>
               </div>
               <button
                 type="button"
@@ -273,7 +270,7 @@
                 class="inline-flex items-center justify-center rounded-lg border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 active:bg-blue-800 transition-colors gap-2"
               >
                 <i class="fa-solid fa-file-circle-plus"></i>
-                <span>DEM</span>
+                <span>เพิ่มชุดข้อมูล</span>
               </button>
             </div>
 
@@ -291,20 +288,20 @@
                       class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded mr-1 dem-index"
                       >#1</span
                     >
-                    ข้อมูลชุดที่ 1
+                    ชุดข้อมูลที่ 1
                     <button
                       type="button"
                       class="btn-remove-dem-item inline-flex items-center justify-center rounded-md border border-rose-300 bg-white px-2.5 py-1 text-xs font-medium text-rose-600 hover:bg-rose-500 hover:text-white transition shadow-sm hidden"
                       title="ลบชุดข้อมูลนี้"
                     >
-                      <span class="mr-1">ลบข้อมูล</span>
                       <i class="fa-solid fa-xmark"></i>
+                      <span class="mr-1">ลบข้อมูล</span>
                     </button>
                   </h3>
                   <div class="flex items-center gap-2">
                     <span
                       class="text-[11px] text-slate-500 hidden sm:inline"
-                      >ซ่อน/แสดง ส่วนย่อย</span
+                      >ทั้งหมด</span
                     >
                     <button
                       type="button"
@@ -350,7 +347,7 @@
                             type="text"
                             name="demName[]"
                             class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="เช่น DEM LiDAR พ.ศ. 2566 พื้นที่ลุ่มน้ำบางปะกง"
+                            placeholder="เช่น LiDAR พ.ศ. 2566 พื้นที่ลุ่มน้ำบางปะกง หรือชื่อโครงการจัดทำ DEM"
                           />
                         </div>
 
@@ -384,7 +381,7 @@
                         <div class="sm:basis-[10%] sm:max-w-[96px]">
                           <label
                             class="block text-sm font-medium text-slate-700 mb-1"
-                            >3. ปี</label
+                            >3. ปีจัดทำ</label
                           >
                           <select
                             name="year[]"
@@ -400,7 +397,7 @@
                         <p
                           class="block text-sm font-medium text-slate-700 mb-1"
                         >
-                          4. พื้นที่ครอบคลุม
+                          4. พื้นที่ครอบคลุม (เลือกระบุได้เพียงรูปแบบเดียว)
                         </p>
 
                         <div class="space-y-3 text-sm">
@@ -425,7 +422,7 @@
                                 class="toggle-basin h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
                               />
                               <span>
-                                ลุ่มน้ำ (เลือกได้หลายค่า / พิมพ์เอง)
+                                ลุ่มน้ำ (สามารถระบุได้หลายค่า)
                               </span>
                               <!-- Stack ของ Tag ลุ่มน้ำ -->
                               <div
@@ -446,8 +443,7 @@
                                 <!-- เติมจากชีท reference ผ่าน Apps Script -->
                               </select>
                               <p class="mt-1 text-xs text-slate-500">
-                                * ดับเบิ้ลคลิกที่รายการ เพื่อเพิ่ม/เอาออกจาก
-                                Stack ด้านบน
+                                * Double Click เพื่อเพิ่ม/ลบ ลุ่มน้ำ
                               </p>
                               <input
                                 type="hidden"
@@ -467,7 +463,7 @@
                                 class="toggle-province h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
                               />
                               <span>
-                                จังหวัด (เลือกได้หลายค่า / พิมพ์เอง)
+                                จังหวัด (สามารถระบุได้หลายค่า)
                               </span>
                               <!-- Stack ของ Tag จังหวัด -->
                               <div
@@ -488,8 +484,7 @@
                                 <!-- เติมจากชีท reference ผ่าน Apps Script -->
                               </select>
                               <p class="mt-1 text-xs text-slate-500">
-                                * ดับเบิ้ลคลิกที่รายการ เพื่อเพิ่ม/เอาออกจาก
-                                Stack ด้านบน
+                                * Double Click เพื่อเพิ่ม/ลบ จังหวัด
                               </p>
                               <input
                                 type="hidden"
@@ -506,7 +501,7 @@
                                 type="checkbox"
                                 class="toggle-local h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
                               />
-                              <span>พื้นที่เฉพาะจุด (รับได้ 1 ค่า)</span>
+                              <span>พื้นที่เฉพาะจุด</span>
                             </label>
                             <div class="local-block mt-1 hidden">
                               <input
@@ -516,9 +511,6 @@
                                 placeholder="เช่น เขตเทศบาลเมืองหาดใหญ่"
                                 disabled
                               />
-                              <p class="mt-1 text-xs text-slate-500">
-                                * กรอกได้ 1 พื้นที่
-                              </p>
                             </div>
                           </div>
                         </div>
@@ -582,7 +574,7 @@
                         <div class="lg:flex-1 min-w-[140px]">
                           <label
                             class="block text-sm font-medium text-slate-700 mb-1"
-                            >6. Vertical Accuracy (m)</label
+                            >6. Vertical Accuracy (ม.)</label
                           >
                           <input
                             type="number"
@@ -596,7 +588,7 @@
                         <div class="lg:flex-1 min-w-[140px]">
                           <label
                             class="block text-sm font-medium text-slate-700 mb-1"
-                            >7. Horizontal Accuracy (m)</label
+                            >7. Horizontal Accuracy (ม.)</label
                           >
                           <input
                             type="number"
@@ -647,7 +639,7 @@
                             name="coordSys[]"
                             class="coord-select block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           >
-                            <option value="">-- เลือกระบบพิกัด --</option>
+                            <option value="">-- เลือก Coordinate System --</option>
                             <option value="WGS84">WGS84</option>
                             <option value="UTM47N">UTM 47N</option>
                             <option value="UTM48N">UTM 48N</option>
@@ -672,7 +664,7 @@
                         <legend
                           class="text-sm font-semibold text-slate-700 px-1"
                         >
-                          10. DEM Method (เลือกได้หลายค่า)
+                          10. วิธีการจัดทำ DEM (สามารถระบุได้หลายค่า)
                         </legend>
                         <div class="mt-2 flex flex-wrap gap-3 text-sm">
                           <label class="inline-flex items-center gap-2">
@@ -1191,7 +1183,7 @@
 
     <script>
       // ★★ ใส่ URL Web App ของ Apps Script ที่นี่ ★★
-      const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8Wf9vZsQbksaG7dmtWxw2b26xzCxI0Rl1lTlWggIS_rlULBL-wkOjDgRBZuH_vWI5Lw/exec";
+      const APPS_SCRIPT_URL = "https://script.google.com/macros/s/XXXXXXXXXXXX/exec";
     
       const demContainer = document.getElementById("demItemsContainer");
       const btnAddDemItem = document.getElementById("btnAddDemItem");
@@ -1285,7 +1277,7 @@
         });
       }
     
-      // -------------------- DEM Index (#ข้อมูลชุดที่ X) --------------------
+      // -------------------- DEM Index (ข้อมูลชุดที่ X) --------------------
       function updateDemIndexes() {
         const items = demContainer.querySelectorAll(".dem-item");
         items.forEach((item, index) => {
@@ -1822,10 +1814,22 @@
           // A. ข้อมูลทั่วไป
           itemData.demName =
             item.querySelector('input[name="demName[]"]')?.value.trim() || "";
-          itemData.sourceType =
-            item.querySelector('select[name="sourceType[]"]')?.value || "";
-          itemData.sourceOther =
-            item.querySelector('input[name="sourceOther[]"]')?.value.trim() || "";
+    
+          // แหล่งที่มา: ใช้คอลัมน์เดียว (ถ้า other ให้เอาค่าที่พิมพ์)
+          const sourceSelect = item.querySelector('select[name="sourceType[]"]');
+          const sourceOtherInput = item.querySelector(
+            'input[name="sourceOther[]"]'
+          );
+          if (sourceSelect) {
+            if (sourceSelect.value === "other") {
+              itemData.sourceType = (sourceOtherInput?.value.trim() || "");
+            } else {
+              itemData.sourceType = sourceSelect.value || "";
+            }
+          } else {
+            itemData.sourceType = "";
+          }
+    
           itemData.year =
             item.querySelector('select[name="year[]"]')?.value || "";
     
@@ -1843,27 +1847,61 @@
             "";
     
           // B. คุณภาพเชิงพื้นที่
-          itemData.resolution =
-            item.querySelector('select[name="resolution[]"]')?.value || "";
-          itemData.resolutionOther =
-            item.querySelector('input[name="resolutionOther[]"]')?.value.trim() ||
-            "";
+          // Resolution: ถ้าเลือก 'other' หรือ 'lidar_sub1m' ให้ใช้ค่าที่พิมพ์
+          const resSelect = item.querySelector('select[name="resolution[]"]');
+          const resOtherInput = item.querySelector(
+            'input[name="resolutionOther[]"]'
+          );
+          if (resSelect) {
+            if (
+              resSelect.value === "other" ||
+              resSelect.value === "lidar_sub1m"
+            ) {
+              itemData.resolution = (resOtherInput?.value.trim() || "");
+            } else {
+              itemData.resolution = resSelect.value || "";
+            }
+          } else {
+            itemData.resolution = "";
+          }
+    
           itemData.verticalAccuracy =
             item.querySelector('input[name="verticalAccuracy[]"]')?.value || "";
           itemData.horizontalAccuracy =
             item.querySelector('input[name="horizontalAccuracy[]"]')?.value ||
             "";
-          itemData.verticalDatum =
-            item.querySelector('select[name="verticalDatum[]"]')?.value || "";
-          itemData.verticalDatumOther =
-            item.querySelector(
-              'input[name="verticalDatumOther[]"]'
-            )?.value.trim() || "";
-          itemData.coordSys =
-            item.querySelector('select[name="coordSys[]"]')?.value || "";
-          itemData.coordSysOther =
-            item.querySelector('input[name="coordSysOther[]"]')?.value.trim() ||
-            "";
+    
+          // Vertical Datum: ถ้า other ให้ใช้ค่าที่พิมพ์
+          const vDatumSelect = item.querySelector(
+            'select[name="verticalDatum[]"]'
+          );
+          const vDatumInput = item.querySelector(
+            'input[name="verticalDatumOther[]"]'
+          );
+          if (vDatumSelect) {
+            if (vDatumSelect.value === "other") {
+              itemData.verticalDatum = (vDatumInput?.value.trim() || "");
+            } else {
+              itemData.verticalDatum = vDatumSelect.value || "";
+            }
+          } else {
+            itemData.verticalDatum = "";
+          }
+    
+          // Coordinate System: ถ้า other ให้ใช้ค่าที่พิมพ์
+          const coordSelect = item.querySelector('select[name="coordSys[]"]');
+          const coordInput = item.querySelector(
+            'input[name="coordSysOther[]"]'
+          );
+          if (coordSelect) {
+            if (coordSelect.value === "other") {
+              itemData.coordSys = (coordInput?.value.trim() || "");
+            } else {
+              itemData.coordSys = coordSelect.value || "";
+            }
+          } else {
+            itemData.coordSys = "";
+          }
     
           // วิธีการจัดทำ DEM
           itemData.demMethods = getCheckedValues(item, 'input[name^="demMethod"]');
@@ -1883,12 +1921,18 @@
           itemData.fileSizeUnit =
             item.querySelector('select[name="fileSizeUnit[]"]')?.value || "";
     
-          // ลิขสิทธิ์
-          itemData.license =
-            item.querySelector('select[name="license[]"]')?.value || "";
-          itemData.licenseOther =
-            item.querySelector('input[name="licenseOther[]"]')?.value.trim() ||
-            "";
+          // ลิขสิทธิ์: ถ้า other ให้ใช้ค่าที่พิมพ์
+          const licSelect = item.querySelector('select[name="license[]"]');
+          const licInput = item.querySelector('input[name="licenseOther[]"]');
+          if (licSelect) {
+            if (licSelect.value === "other") {
+              itemData.license = (licInput?.value.trim() || "");
+            } else {
+              itemData.license = licSelect.value || "";
+            }
+          } else {
+            itemData.license = "";
+          }
     
           // ช่องทางการเข้าถึง
           itemData.accessChannels = getCheckedValues(
