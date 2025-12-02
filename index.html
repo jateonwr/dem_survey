@@ -2163,7 +2163,7 @@
         requiredInputs.forEach((input) => {
           // ถ้าค่าว่าง
           if (!input.value.trim()) {
-            showError(input, "กรุณาระบุข้อมูลในช่องนี้"); // ข้อความที่จะแสดง
+            showError(input, "* จำเป็น (โปรดระบุ)");
             isValid = false;
             if (!firstInvalidInput) firstInvalidInput = input;
             
