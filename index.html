@@ -103,15 +103,18 @@
         font-size: 0.75rem;
         background-color: #dbeafe; /* blue-100 */
         color: #1d4ed8; /* blue-700 */
-        cursor: pointer;
+        cursor: default;
         margin-right: 0.25rem;
         margin-bottom: 0.25rem;
+        position: relative;
+        z-index: 10;
       }
       .tag-pill .tag-text {
         margin-right: 0.25rem;
       }
       .tag-pill .tag-remove {
         font-weight: 600;
+        cursor: pointer;
       }
     </style>
   </head>
@@ -1530,7 +1533,7 @@
         function setupTagStack(selectEl, tagsContainer, hiddenInput) {
           if (!selectEl || !tagsContainer || !hiddenInput) return;
           let values = [];
-    
+        
           function renderTags() {
             tagsContainer.innerHTML = "";
             values.forEach((val) => {
@@ -1545,25 +1548,22 @@
             });
             hiddenInput.value = values.join(", ");
           }
-    
+        
           function addValue(val) {
             const v = (val || "").trim();
             if (!v || values.includes(v)) return;
             values.push(v);
             renderTags();
           }
-    
+        
           function removeValue(val) {
             const idx = values.indexOf(val);
             if (idx === -1) return;
             values.splice(idx, 1);
-            renderValues();
-          }
-    
-          function renderValues() {
             renderTags();
           }
-    
+        
+          // ดับเบิลคลิกที่ option เพื่อเพิ่มแท็ก
           selectEl.addEventListener("dblclick", () => {
             const opt = selectEl.options[selectEl.selectedIndex];
             const text = opt ? opt.textContent.trim() : "";
@@ -1574,9 +1574,15 @@
               addValue(text);
             }
           });
-    
-          tagsContainer.addEventListener("dblclick", (e) => {
-            const pill = e.target.closest(".tag-pill");
+        
+          // ⬇⬇⬇ แก้ส่วนนี้ใหม่: ให้ลบด้วยการคลิกที่กากบาท ⬇⬇⬇
+          tagsContainer.addEventListener("click", (e) => {
+            const removeBtn = e.target.closest(".tag-remove");
+            if (!removeBtn) return;
+            e.preventDefault();
+            e.stopPropagation(); // กันไม่ให้ไปโดน checkbox ข้างหลัง
+        
+            const pill = removeBtn.closest(".tag-pill");
             if (!pill) return;
             const v = pill.dataset.value;
             removeValue(v);
