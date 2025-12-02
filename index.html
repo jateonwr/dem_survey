@@ -1592,12 +1592,27 @@
         // ---- Search Filter Helper ----
         function setupSearchFilter(selectEl, searchInput) {
           if (!selectEl || !searchInput) return;
-          const allOptions = Array.from(selectEl.options);
+        
           searchInput.addEventListener("input", () => {
-            const term = searchInput.value.toLowerCase();
-            allOptions.forEach((opt) => {
-              const match = opt.textContent.toLowerCase().includes(term);
-              opt.hidden = !match;
+            const term = searchInput.value.trim().toLowerCase();
+        
+            // ใช้ options ปัจจุบันทุกครั้ง (รองรับกรณี ref โหลดใหม่ / clone)
+            const opts = Array.from(selectEl.options);
+        
+            opts.forEach((opt, idx) => {
+              // สมมติ option แรกเป็น placeholder ให้โชว์ตลอด
+              if (idx === 0 && opt.value === "") {
+                opt.hidden = false;
+                return;
+              }
+        
+              if (!term) {
+                // ถ้าไม่มีข้อความค้นหา → โชว์ทุก option
+                opt.hidden = false;
+              } else {
+                const match = opt.textContent.toLowerCase().includes(term);
+                opt.hidden = !match;
+              }
             });
           });
         }
