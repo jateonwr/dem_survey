@@ -2143,7 +2143,77 @@
     
         return { agency, items };
       }
-    
+
+      // ฟังก์ชันแสดง Error ที่ input
+      function showError(input, message) {
+        // 1. เปลี่ยนเส้นขอบเป็นสีแดง
+        input.classList.add("border-red-500", "focus:border-red-500", "focus:ring-red-500");
+        input.classList.remove("border-slate-300", "focus:border-blue-500", "focus:ring-blue-500");
+
+        // 2. ตรวจสอบว่ามีข้อความ Error อยู่แล้วไหม ถ้ามีไม่เติมซ้ำ
+        const parent = input.parentElement;
+        if (!parent.querySelector(".error-text-msg")) {
+          const msg = document.createElement("p");
+          msg.className = "error-text-msg text-red-500 text-xs mt-1"; // สไตล์ข้อความสีแดง
+          msg.textContent = message;
+          parent.appendChild(msg);
+        }
+      }
+
+      // ฟังก์ชันลบ Error เมื่อ user เริ่มกรอกข้อมูล
+      function clearError(input) {
+        // 1. คืนค่าเส้นขอบเป็นสีปกติ
+        input.classList.remove("border-red-500", "focus:border-red-500", "focus:ring-red-500");
+        input.classList.add("border-slate-300", "focus:border-blue-500", "focus:ring-blue-500");
+
+        // 2. ลบข้อความ Error ทิ้ง
+        const parent = input.parentElement;
+        const msg = parent.querySelector(".error-text-msg");
+        if (msg) {
+          msg.remove();
+        }
+      }
+
+      // ฟังก์ชันตรวจสอบความถูกต้องทั้งฟอร์ม
+      function validateFormCustom() {
+        let isValid = true;
+        let firstInvalidInput = null;
+
+        // ดึง input, select, textarea ทั้งหมดที่มี attribute 'required'
+        // และต้องไม่ disabled (เพราะฟิลด์ที่ซ่อนเราสั่ง disabled ไว้แล้ว)
+        const requiredInputs = form.querySelectorAll("[required]:not([disabled])");
+
+        requiredInputs.forEach((input) => {
+          // ถ้าค่าว่าง
+          if (!input.value.trim()) {
+            showError(input, "กรุณาระบุข้อมูลในช่องนี้"); // ข้อความที่จะแสดง
+            isValid = false;
+            if (!firstInvalidInput) firstInvalidInput = input;
+            
+            // เพิ่ม Event Listener: พิมพ์แล้ว Error หายทันที
+            input.addEventListener("input", function() {
+                clearError(this);
+            }, { once: true }); // ทำงานครั้งเดียวแล้วลบ listener ออกเพื่อไม่ให้ซ้ำซ้อน
+            
+            // สำหรับ Select box ใช้ event 'change'
+            input.addEventListener("change", function() {
+                clearError(this);
+            }, { once: true });
+
+          } else {
+            clearError(input);
+          }
+        });
+
+        // ถ้ามีช่องผิด ให้เลื่อนหน้าจอไปหาช่องแรกที่ผิด
+        if (firstInvalidInput) {
+          firstInvalidInput.scrollIntoView({ behavior: "smooth", block: "center" });
+          firstInvalidInput.focus();
+        }
+
+        return isValid;
+      }
+      
       async function submitToAppsScript(payload) {
         const resp = await fetch(APPS_SCRIPT_URL, {
           method: "POST",
@@ -2164,39 +2234,48 @@
     
       form.addEventListener("submit", (e) => {
         e.preventDefault();
-    
-        // ใช้ HTML5 validation ก่อน (required / phone / อื่น ๆ)
-        if (!form.reportValidity()) {
-          return;
+
+        // 1. เรียกใช้ Custom Validation แทน form.reportValidity()
+        if (!validateFormCustom()) {
+          // ถ้าไม่ผ่าน ให้หยุดทำงานตรงนี้ (ข้อความสีแดงจะขึ้นเองจากฟังก์ชันข้างบน)
+          return; 
         }
-    
+
+        // 2. ถ้าผ่านแล้ว ค่อยเปิด Modal ยืนยัน
         openConfirmModal(
           "ยืนยันการส่งแบบฟอร์ม",
           "โปรดตรวจสอบข้อมูลให้ถูกต้อง ก่อนยืนยันการส่งแบบฟอร์ม",
           async () => {
             const payload = collectFormData();
             try {
+              // เพิ่ม Loading state หรือ disable ปุ่มตรงนี้ก็ได้ถ้าต้องการ
               const res = await submitToAppsScript(payload);
-    
-              // ถ้าสำเร็จ แสดง popup ตรงกลาง
+
               if (res && res.success) {
                 openSuccessModal();
               } else {
                 alert("บันทึกข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
               }
-    
-              // reset form กลับไปเหลือ DEM 1 ชุด
+
+              // Reset Form logic... (เหมือนเดิม)
               form.reset();
+              // ลบ Error แดงค้างเก่า (ถ้ามี)
+              form.querySelectorAll(".error-text-msg").forEach(e => e.remove());
+              form.querySelectorAll(".border-red-500").forEach(e => {
+                  e.classList.remove("border-red-500");
+                  e.classList.add("border-slate-300");
+              });
+
               const items = demContainer.querySelectorAll(".dem-item");
               items.forEach((item, idx) => {
                 if (idx > 0) item.remove();
               });
-    
+
               const first = demContainer.querySelector(".dem-item");
               if (first) {
                 attachOtherFieldHandlers(first);
               }
-    
+
               populateYearSelects();
               updateDemIndexes();
               applyReferenceDataToAllItems();
