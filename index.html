@@ -269,7 +269,7 @@
               <button
                 type="button"
                 id="btnAddDemItem"
-                class="inline-flex items-center justify-center rounded-lg border border-blue-600 bg-blue-600 px-1 py-0.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700 active:bg-blue-800 transition-colors gap-2"
+                class="inline-flex items-center justify-center rounded-lg border border-blue-600 bg-blue-600 px-2.5 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700 active:bg-blue-800 transition-colors gap-2"
               >
                 <i class="fa-solid fa-file-circle-plus"></i>
                 <span>เพิ่มชุดข้อมูล</span>
@@ -296,8 +296,8 @@
                       class="btn-remove-dem-item inline-flex items-center justify-center rounded-md border border-rose-300 bg-white px-1 py-0.5 text-xm font-medium text-rose-600 hover:bg-rose-500 hover:text-white transition shadow-sm hidden"
                       title="ลบชุดข้อมูลนี้"
                     >
-                      <i class="fa-solid fa-xmark margin-right: 0.1rem"></i>
-                      <span class="mr-1">ลบข้อมูล</span>
+                      <i class="fa-solid fa-xmark mr-1"> </i>
+                      <span class="mr-1">ลบชุดข้อมูล</span>
                     </button>
                   </h3>
                   <div class="flex items-center gap-2">
@@ -429,10 +429,25 @@
                             </div>
                           
                             <div class="basin-block mt-1 hidden">
-                               <input type="text" class="basin-search ..." placeholder="พิมพ์เพื่อค้นหาลุ่มน้ำ" />
-                               <select name="coverageBasin[]" multiple class="basin-select ..."></select>
-                               <p class="mt-1 text-xm text-slate-500">* Double Click เพื่อเพิ่ม/ลบ ลุ่มน้ำ</p>
-                               <input type="hidden" name="coverageBasinOther[]" class="basin-other-input" />
+                              <input
+                                type="text"
+                                class="basin-search mb-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-1 text-xm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="พิมพ์เพื่อค้นหาลุ่มน้ำ"
+                              />
+                              <select
+                                name="coverageBasin[]"
+                                multiple
+                                class="basin-select block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              >
+                                </select>
+                              <p class="mt-1 text-xm text-slate-500">
+                                * Double Click เพื่อเพิ่ม/ลบ ลุ่มน้ำ
+                              </p>
+                              <input
+                                type="hidden"
+                                name="coverageBasinOther[]"
+                                class="basin-other-input"
+                              />
                             </div>
                           </div>
 
@@ -451,10 +466,25 @@
                             </div>
                           
                             <div class="province-block mt-1 hidden">
-                              <input type="text" class="province-search ..." placeholder="พิมพ์เพื่อค้นหาจังหวัด" />
-                              <select name="coverageProvince[]" multiple class="province-select ..."></select>
-                              <p class="mt-1 text-xm text-slate-500">* Double Click เพื่อเพิ่ม/ลบ จังหวัด</p>
-                              <input type="hidden" name="coverageProvinceOther[]" class="province-other-input" />
+                              <input
+                                type="text"
+                                class="province-search mb-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-1 text-xm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="พิมพ์เพื่อค้นหาจังหวัด"
+                              />
+                              <select
+                                name="coverageProvince[]"
+                                multiple
+                                class="province-select block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              >
+                                </select>
+                              <p class="mt-1 text-xm text-slate-500">
+                                * Double Click เพื่อเพิ่ม/ลบ จังหวัด
+                              </p>
+                              <input
+                                type="hidden"
+                                name="coverageProvinceOther[]"
+                                class="province-other-input"
+                              />
                             </div>
                           </div>
 
@@ -2196,14 +2226,64 @@
                 alert("บันทึกข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
               }
 
-              // Reset Form logic... (เหมือนเดิม)
+              // 1. Reset Form มาตรฐาน (checkbox จะถูกติ๊กออกตรงนี้)
               form.reset();
-              // ลบ Error แดงค้างเก่า (ถ้ามี)
+              
+              // ลบ Error แดงค้างเก่า
               form.querySelectorAll(".error-text-msg").forEach(e => e.remove());
               form.querySelectorAll(".border-red-500").forEach(e => {
                   e.classList.remove("border-red-500");
                   e.classList.add("border-slate-300");
               });
+
+              // ลบ DEM item ส่วนเกิน
+              const items = demContainer.querySelectorAll(".dem-item");
+              items.forEach((item, idx) => {
+                if (idx > 0) item.remove();
+              });
+
+              // ===============================================
+              // ส่วนที่เพิ่ม: ล้างค่า Stack และซ่อนกล่องที่ค้างอยู่
+              // ===============================================
+              const first = demContainer.querySelector(".dem-item");
+              if (first) {
+                // 1. ล้างป้าย Stack (ลุ่มน้ำ / จังหวัด) ที่ค้างอยู่
+                const basinTags = first.querySelector(".basin-tags");
+                const provinceTags = first.querySelector(".province-tags");
+                if (basinTags) basinTags.innerHTML = "";
+                if (provinceTags) provinceTags.innerHTML = "";
+
+                // 2. ล้างค่า Hidden Input ของ Stack ให้เกลี้ยง
+                const basinHidden = first.querySelector(".basin-other-input");
+                const provinceHidden = first.querySelector(".province-other-input");
+                if (basinHidden) basinHidden.value = "";
+                if (provinceHidden) provinceHidden.value = "";
+
+                // 3. ซ่อนกล่อง (Block) ที่เคยเปิดค้างไว้
+                const basinBlock = first.querySelector(".basin-block");
+                const provinceBlock = first.querySelector(".province-block");
+                const localBlock = first.querySelector(".local-block");
+                if (basinBlock) basinBlock.classList.add("hidden");
+                if (provinceBlock) provinceBlock.classList.add("hidden");
+                if (localBlock) localBlock.classList.add("hidden");
+
+                // 4. ล้างค่า "พื้นที่เฉพาะจุด" และ Disable มันกลับคืน
+                const localInput = first.querySelector(".local-input");
+                if (localInput) {
+                    localInput.value = "";
+                    localInput.disabled = true;
+                    // ลบ required ออกด้วย (เพราะถูกซ่อนแล้ว)
+                    localInput.required = false; 
+                    clearError(localInput);
+                }
+
+                // เรียกฟังก์ชันนี้เพื่อให้ Logic ปุ่มอื่นๆ กลับมาทำงานถูกต้อง
+                attachOtherFieldHandlers(first);
+              }
+
+              populateYearSelects();
+              updateDemIndexes();
+              applyReferenceDataToAllItems();
 
               const items = demContainer.querySelectorAll(".dem-item");
               items.forEach((item, idx) => {
