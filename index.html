@@ -416,83 +416,45 @@
 
                           <!-- ลุ่มน้ำ -->
                           <div class="space-y-1">
-                            <label
-                              class="inline-flex flex-wrap items-center gap-2"
-                            >
-                              <input
-                                type="checkbox"
-                                class="toggle-basin h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
-                              />
-                              <span>
-                                ลุ่มน้ำ (สามารถระบุได้หลายค่า)
-                              </span>
-                              <!-- Stack ของ Tag ลุ่มน้ำ -->
-                              <div
-                                class="basin-tags flex flex-wrap items-center gap-1"
-                              ></div>
-                            </label>
+                            <div class="inline-flex flex-wrap items-center gap-2">
+                              <label class="inline-flex items-center gap-2 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  class="toggle-basin h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                                />
+                                <span>ลุ่มน้ำ (สามารถระบุได้หลายค่า)</span>
+                              </label>
+                              
+                              <div class="basin-tags flex flex-wrap items-center gap-1"></div>
+                            </div>
+                          
                             <div class="basin-block mt-1 hidden">
-                              <input
-                                type="text"
-                                class="basin-search mb-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-1 text-xm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="พิมพ์เพื่อค้นหาลุ่มน้ำ"
-                              />
-                              <select
-                                name="coverageBasin[]"
-                                multiple
-                                class="basin-select block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              >
-                                <!-- เติมจากชีท reference ผ่าน Apps Script -->
-                              </select>
-                              <p class="mt-1 text-xm text-slate-500">
-                                * Double Click เพื่อเพิ่ม/ลบ ลุ่มน้ำ
-                              </p>
-                              <input
-                                type="hidden"
-                                name="coverageBasinOther[]"
-                                class="basin-other-input"
-                              />
+                               <input type="text" class="basin-search ..." placeholder="พิมพ์เพื่อค้นหาลุ่มน้ำ" />
+                               <select name="coverageBasin[]" multiple class="basin-select ..."></select>
+                               <p class="mt-1 text-xm text-slate-500">* Double Click เพื่อเพิ่ม/ลบ ลุ่มน้ำ</p>
+                               <input type="hidden" name="coverageBasinOther[]" class="basin-other-input" />
                             </div>
                           </div>
 
                           <!-- จังหวัด -->
                           <div class="space-y-1">
-                            <label
-                              class="inline-flex flex-wrap items-center gap-2"
-                            >
-                              <input
-                                type="checkbox"
-                                class="toggle-province h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
-                              />
-                              <span>
-                                จังหวัด (สามารถระบุได้หลายค่า)
-                              </span>
-                              <!-- Stack ของ Tag จังหวัด -->
-                              <div
-                                class="province-tags flex flex-wrap items-center gap-1"
-                              ></div>
-                            </label>
+                            <div class="inline-flex flex-wrap items-center gap-2">
+                              <label class="inline-flex items-center gap-2 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  class="toggle-province h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                                />
+                                <span>จังหวัด (สามารถระบุได้หลายค่า)</span>
+                              </label>
+                          
+                              <div class="province-tags flex flex-wrap items-center gap-1"></div>
+                            </div>
+                          
                             <div class="province-block mt-1 hidden">
-                              <input
-                                type="text"
-                                class="province-search mb-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-1 text-xm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="พิมพ์เพื่อค้นหาจังหวัด"
-                              />
-                              <select
-                                name="coverageProvince[]"
-                                multiple
-                                class="province-select block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              >
-                                <!-- เติมจากชีท reference ผ่าน Apps Script -->
-                              </select>
-                              <p class="mt-1 text-xm text-slate-500">
-                                * Double Click เพื่อเพิ่ม/ลบ จังหวัด
-                              </p>
-                              <input
-                                type="hidden"
-                                name="coverageProvinceOther[]"
-                                class="province-other-input"
-                              />
+                              <input type="text" class="province-search ..." placeholder="พิมพ์เพื่อค้นหาจังหวัด" />
+                              <select name="coverageProvince[]" multiple class="province-select ..."></select>
+                              <p class="mt-1 text-xm text-slate-500">* Double Click เพื่อเพิ่ม/ลบ จังหวัด</p>
+                              <input type="hidden" name="coverageProvinceOther[]" class="province-other-input" />
                             </div>
                           </div>
 
