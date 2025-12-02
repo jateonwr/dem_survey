@@ -2012,6 +2012,19 @@
     
           itemData.year =
             item.querySelector('select[name="year[]"]')?.value || "";
+
+          const rawCountry = getCheckedValues(
+            item,
+            'input[name="coverageCountry[]"]',
+            false
+          );
+          // ถ้าใน array มีค่า "thailand_all" ให้เปลี่ยนเป็น "ทั่วประเทศ"
+          itemData.coverageCountry = rawCountry.map(val => 
+              val === 'thailand_all' ? 'ทั่วประเทศ' : val
+          );
+          
+          itemData.coverageBasinTags =
+            item.querySelector(".basin-other-input")?.value.trim() || "";
     
           // พื้นที่ครอบคลุม
           itemData.coverageCountry = getCheckedValues(
