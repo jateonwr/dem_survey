@@ -1135,6 +1135,46 @@
       </div>
     </div>
 
+    <div
+      id="confirmModal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900/60 transition-opacity"
+    >
+      <div
+        class="bg-white rounded-2xl shadow-xl w-full max-w-[400px] mx-4 p-6 transform transition-all"
+      >
+        <h3
+          id="confirmTitle"
+          class="text-xl font-bold text-gray-900 mb-2 text-left"
+        >
+          ยืนยันล้างข้อมูล
+        </h3>
+
+        <p
+          id="confirmMessage"
+          class="text-base text-gray-600 mb-8 text-left leading-relaxed"
+        >
+          คุณต้องการล้างค่าทั้งหมดในแบบฟอร์มหรือไม่?
+        </p>
+
+        <div class="flex justify-end gap-3">
+          <button
+            type="button"
+            id="confirmCancel"
+            class="px-5 py-2.5 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors"
+          >
+            ยกเลิก
+          </button>
+          <button
+            type="button"
+            id="confirmOk"
+            class="px-5 py-2.5 rounded-lg bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-colors"
+          >
+            ยืนยัน
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script>
       // ★★ ใส่ URL Web App ของ Apps Script ที่นี่ ★★
       const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8Wf9vZsQbksaG7dmtWxw2b26xzCxI0Rl1lTlWggIS_rlULBL-wkOjDgRBZuH_vWI5Lw/exec";
@@ -1226,30 +1266,37 @@
         }
       });
     
-      // -------------------- Success Modal --------------------
+// -------------------- Success Modal Control --------------------
       const successModal = document.getElementById("successModal");
       const successOk = document.getElementById("successOk");
-    
+
       function openSuccessModal() {
         if (!successModal) return;
+        // ลบ hidden เพื่อแสดง และจัด layout เป็น flex เพื่อให้ content อยู่กลางจอ
         successModal.classList.remove("hidden");
         successModal.classList.add("flex");
+        
+        // (Optional) สั่งให้ปุ่ม OK โฟกัสทันที เพื่อให้กด Enter ปิดได้เลย
+        if(successOk) successOk.focus();
       }
-    
+
       function closeSuccessModal() {
         if (!successModal) return;
         successModal.classList.add("hidden");
         successModal.classList.remove("flex");
       }
-    
+
+      // ผูก Event ปุ่มกดปิด
       if (successOk) {
         successOk.addEventListener("click", closeSuccessModal);
       }
+      // กดพื้นหลังเพื่อปิด
       if (successModal) {
         successModal.addEventListener("click", (e) => {
-          if (e.target === successModal) {
-            closeSuccessModal();
-          }
+           // ปิดเฉพาะตอนคลิกที่พื้นหลัง (backdrop) ไม่ใช่คลิกที่กล่อง
+           if (e.target === successModal) { 
+             closeSuccessModal(); 
+           }
         });
       }
     
