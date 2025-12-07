@@ -318,6 +318,11 @@
 
              const updateState = () => {
                 const isCountry = els.country && els.country.checked;
+                // Safety check for toggles before accessing checked
+                const basinChecked = els.basinToggle ? els.basinToggle.checked : false;
+                const provChecked = els.provToggle ? els.provToggle.checked : false;
+                const localChecked = els.localToggle ? els.localToggle.checked : false;
+
                 if (isCountry) {
                    [els.basinToggle, els.provToggle, els.localToggle].forEach(el => { if(el) { el.checked = false; el.disabled = true; }});
                    if(els.basinBlock) els.basinBlock.classList.add("hidden");
@@ -343,17 +348,17 @@
 
                 } else {
                    [els.basinToggle, els.provToggle, els.localToggle].forEach(el => { if(el) el.disabled = false; });
-                   if(els.basinBlock) els.basinBlock.classList.toggle("hidden", !els.basinToggle.checked);
-                   if(els.provBlock) els.provBlock.classList.toggle("hidden", !els.provToggle.checked);
+                   if(els.basinBlock) els.basinBlock.classList.toggle("hidden", !basinChecked);
+                   if(els.provBlock) els.provBlock.classList.toggle("hidden", !provChecked);
                    
-                   const showLocal = els.localToggle.checked;
-                   if(els.localContainer) els.localContainer.classList.toggle("hidden", !showLocal);
-                   if(els.btnAddLocal) els.btnAddLocal.classList.toggle("hidden", !showLocal);
+                   if(els.localContainer) els.localContainer.classList.toggle("hidden", !localChecked);
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+                   if(els.btnAddLocal) els.btnAddLocal.classList.toggle("hidden", !localChecked);
 
                    if(els.localContainer) {
                       els.localContainer.querySelectorAll(".local-input").forEach(inp => {
-                        inp.disabled = !showLocal;
-                        if (!showLocal) {
+                        inp.disabled = !localChecked;
+                        if (!localChecked) {
                           inp.value = "";
                           Utils.clearError(inp);
                         }
