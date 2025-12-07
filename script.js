@@ -274,6 +274,21 @@
 
           setupCoverageLogic: (item) => {
              const els = {
+               country: item.querySelector('input[name="coverageCountry[]"]'),
+               basinToggle: item.querySelector(".toggle-basin"),
+               provToggle: item.querySelector(".toggle-province"),
+               localToggle: item.querySelector(".toggle-local"),
+               localContainer: item.querySelector(".local-container"),
+               btnAddLocal: item.querySelector(".btn-add-local"),
+               localRows: item.querySelector(".local-row"),
+               basinBlock: item.querySelector(".basin-block"),
+               provBlock: item.querySelector(".province-block"),
+               basinTags: item.querySelector(".basin-tags"),
+               provTags: item.querySelector(".province-tags"),
+               basinHidden: item.querySelector(".basin-other-input"),
+               provHidden: item.querySelector(".province-other-input"),
+               basinSelect: item.querySelector(".basin-select"),
+               provSelect: item.querySelector(".province-select")
              };
 
              // Tag Stack Logic

@@ -179,14 +179,14 @@
                           <div class="space-y-1">
                             <label class="inline-flex items-center gap-2">
                               <input type="checkbox" class="toggle-local h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500" />
-                              <span>พื้นที่เฉพาะจุด</span>
+                              <span>พื้นที่เฉพาะจุด (สามารถระบุได้หลายค่า)</span>
                             </label>
-                            <button type="button" class="btn-add-local hidden inline-flex items-center justify-center rounded-full bg-blue-100 text-blue-600 h-5 w-5 hover:bg-blue-200 transition-colors" title="เพิ่มพื้นที่">
-                              <i class="fa-solid fa-plus text-xs"></i>
+                            <button type="button" class="btn-add-local hidden inline-flex items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors px-2 -translate-y-0.5 ml-1">
+                              <i class="fa-solid fa-plus text-[10px] mr-1 mt-1"></i><span class="text-[10px] font-bold mt-1">เพิ่มพื้นที่</span>
                             </button>
                             <div class="local-container mt-1 hidden space-y-2">
                               <div class="local-row flex items-center gap-2">
-                                <button type="button" class="btn-remove-local inline-flex items-center justify-center rounded-full bg-slate-100 text-slate-400 h-6 w-6 hover:bg-rose-100 hover:text-rose-500 transition-colors" disabled>
+                                <button type="button" class="btn-remove-local inline-flex items-center justify-center rounded-full bg-slate-100 text-slate-400 h-6 w-6 hover:bg-rose-500 hover:text-white transition-colors" disabled>
                                   <i class="fa-solid fa-minus text-xs"></i>
                                 </button>
                                 <input type="text" name="coverageLocal[]" class="local-input flex-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed" placeholder="เช่น เขตเทศบาลเมืองหาดใหญ่" disabled />
